@@ -1,0 +1,108 @@
+body{
+	margin: 0px 0px 0px 0px;
+	background-color:#EBEBEB; 
+}
+
+/* The sidebar menu */
+.sidenav {
+  height: 100%; 
+  width: 250px; 
+  position: fixed; 
+  z-index: 1; 
+  top: 0; 
+  left: 0;
+  background-color:#EBEBEB; 
+  overflow-x: hidden; 
+  border-right-style: solid;
+  border-right-color: black;
+  border-right-width: 2px;
+}
+
+.logo{
+	margin: 0px 0px 0px 0px;
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* Style the search box inside the navigation bar */
+.sidenav input[type=text] {
+  float: right;
+  padding: 6px;
+  border: none;
+  margin-top: 8px;
+  margin-right: 16px;
+  font-size: 17px;
+}
+
+/* Style page content */
+.main {
+  margin: 0px 0px 0px 270px; 
+}
+
+.header{
+	color: #f2f2f2;
+	text-align: center;
+	text-decoration: none;
+	font-size: 17px;
+	height: 301px;
+	background: #046B33;
+	margin: 0px 0px 0px 240px;
+}
+
+.heading{
+	color: white;
+	margin: 0px;
+	padding-top: 70px;
+}
+
+/* Add a black background color to the top navigation */
+.topnav {
+  background-color: #929292;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  margin-left: 250px;
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.container{
+	background-color: #046B33;
+	font-size: 17px;
+	color: #f2f2f2;
+	margin-right: 30px;
+	border-style: solid;
+	border-color: black;
+    border-width: 2px;
+}
