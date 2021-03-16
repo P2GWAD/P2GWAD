@@ -32,16 +32,20 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:index' %}">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:about' %}">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account'%}">Account</a></li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account' user.username%}">Account</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' %}">Groups</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends'%}">Friends</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' %}">Find Friends</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends' user.username%}">Friends</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' user.username%}">Search Players</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:playRandom' %}">Play Random</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:highscores' %}">High Scores</a></li>
-			<li class="nav-item"><a class="nav-link" href="{% url 'P2G:register' %}">Register</a></li>
-			<li class="nav-item"><a class="nav-link" href="{% url 'P2G:login' %}">Log In</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'auth_logout' %}?next=/P2G/">Logout</a></li>
+                        {% else %}
+			            <li class="nav-item"><a class="nav-link" href="{% url 'registration_register' %}">Register Here</a></li>
+                        <li class="nav-item "><a class="nav-link" href="{% url 'auth_login' %}">Login</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>

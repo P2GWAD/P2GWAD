@@ -39,7 +39,7 @@ class UserProfile(models.Model):
     bio = models.CharField(max_length=512)
 
     def __str__(self):
-        return self.name
+        return self.user.username
 
 class Score(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
