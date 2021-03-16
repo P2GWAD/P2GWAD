@@ -37,6 +37,7 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends'%}">Friends</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' %}">Find Friends</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:playRandom' %}">Play Random</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:highscores' %}">High Scores</a></li>
 			<li class="nav-item"><a class="nav-link" href="{% url 'P2G:register' %}">Register</a></li>
@@ -82,11 +83,7 @@
         <script src="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.js"></script>
 
         <script src="{% static 'js/jquery-3.3.1.min.js' %}" crossorigin="anonymous"></script>
-
-        <!--
-        <script src="{% static 'js/rango-jquery.js' %}" crossorigin="anonymous"></script>
-        <script src="{% static 'js/rango-ajax.js' %}" crossorigin="anonymous"></script>
-        -->
+        <script src="{% static 'js/P2G-ajax.js' %}" crossorigin="anonymous"></script>
 
         {% block further_scripts %}
         {% endblock %}

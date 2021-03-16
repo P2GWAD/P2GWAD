@@ -1,0 +1,46 @@
+{% extends 'P2G/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    {{ category.name }}
+{% endblock %}
+
+{% block body_block %}
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1> {{ category.name }} </h1>
+            Use game_slug<br>
+            {{ category.description }}
+            <form action="{% url 'P2G:add_game' category.id %}">
+                <button type="submit">Add Game</button>
+            </form>
+        </div>
+    </div>
+
+    {% if games %}
+        <div class="list-group">
+            {% for game in games %}
+                <div class="list-group-item">
+                    <h3 class="list-group-item-heading">
+                            <a href="{{ game.link }}">
+                                {{ game.name }}
+                            </a>
+                            <button class="btn btn-info btn-sm P2G new-game-group"
+                                type="button"
+                                data-id="{{ game.id }}"
+                                data-name="{{ game.name }}"
+                                data-link-="{{ game.link }}">
+                            New Group
+                            </button>
+                    </h3>
+                    <p class="list-group-item-text">
+                        {{ game.description }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        There are currently no Games
+    {% endif %}
+
+{% endblock %}

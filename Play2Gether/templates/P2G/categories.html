@@ -1,0 +1,34 @@
+{% extends 'P2G/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Categories
+{% endblock %}
+
+{% block body_block %}
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1> Categories </h1>
+            <form action="{% url 'P2G:add_category' %}">
+                <button type="submit">Add Category</button>
+            </form>
+        </div>
+    </div>
+
+    {% if categories %}
+        <ul>
+            {% for category in categories %}
+                <li><a href="{% url 'P2G:show_category' category.id %}"> {{ category.name }} </a>
+                    {% if page.views != 1 %}
+                        ({{ category.likes }} Likes)
+                    {% elif page.views > 1 %}
+                        ({{ category.likes }} Like)
+                    {% endif %}
+                    ({{ category.description }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        There are currently no Categories
+    {%  endif %}
+{% endblock %}
