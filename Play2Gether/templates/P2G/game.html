@@ -1,0 +1,28 @@
+{% extends 'P2G/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    {{ game.name }}
+{% endblock %}
+
+{% block body_block %}
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1> {{ game.name }} </h1>
+            <form action="{{ game.link}}">
+                <button type="submit">Go to Game</button>
+            </form>
+            <button class="btn btn-info btn-sm P2G new-game-group"
+                    type="button"
+                    data-id="{{ game.id }}"
+                    data-name="{{ game.name }}"
+                    data-link-="{{ game.link }}">
+                New Group
+            </button>
+            <br>
+            {{ game.description }}
+        </div>
+    </div>
+
+    HighScores Here (to implement)
+{% endblock %}
