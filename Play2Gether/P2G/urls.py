@@ -20,4 +20,6 @@ urlpatterns = [
     path('category/<category_id>/add_game/', views.AddGameView.as_view(), name='add_game'),
     path('game/<game_id>/', views.GameView.as_view(), name='show_game'),
     path('suggest/', views.GameSuggestionView.as_view(), name='suggest'),
+    path('register/', views.register, name='register'),
+    path('login/', views.user_login, name='login'),
 ]

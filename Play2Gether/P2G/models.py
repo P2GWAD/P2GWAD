@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -29,19 +30,16 @@ class Group(models.Model):
     def __str__(self):
         return self.id
 
-
-class User(models.Model):
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     games = models.ManyToManyField(Game)
     groups = models.ManyToManyField(Group)
     friends = models.ManyToManyField('self')
-    name = models.CharField(max_length=64, unique=True)
-    email = models.CharField(max_length=64)
-    profile_image = models.URLField()
+    profile_image = models.ImageField(upload_to='profile_images', blank=True)
     bio = models.CharField(max_length=512)
 
     def __str__(self):
         return self.name
-
 
 class Score(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
