@@ -13,4 +13,6 @@ urlpatterns = [
     path('highscores/', views.highscores, name='highscores'),
     path('other_players/', views.otherPlayers, name='otherPlayers'),
     path('play_random/', views.playRandom, name='playRandom'),
+    path('register/', views.register, name='register'),
+    path('login/', views.user_login, name='login'),
 ]
