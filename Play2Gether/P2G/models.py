@@ -23,23 +23,32 @@ class Game(models.Model):
         return self.name
 
 
-class Group(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    name = models.CharField(max_length=64, null=False)
-
-    def __str__(self):
-        return self.id
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     games = models.ManyToManyField(Game)
-    groups = models.ManyToManyField(Group)
     friends = models.ManyToManyField('self')
     profile_image = models.ImageField(upload_to='profile_images', blank=True)
     bio = models.CharField(max_length=512)
 
     def __str__(self):
         return self.user.username
+
+
+class Group(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64, null=False)
+    users = models.ManyToManyField(UserProfile)
+
+    def __str__(self):
+        return self.name
+
+
+class Message(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, default=0)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=1024)
+    date = models.DateTimeField()
+
 
 class Score(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)

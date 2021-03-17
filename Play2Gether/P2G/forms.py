@@ -30,8 +30,17 @@ class GameForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    bio = forms.CharField(max_length=4096,
-                                  widget=forms.Textarea(attrs={'cols': 40, 'rows': 10}))
+    bio = forms.CharField(max_length=4096, widget=forms.Textarea(attrs={'cols': 40, 'rows': 10}))
+
     class Meta:
         model = UserProfile
         fields = ('profile_image', 'bio',)
+
+
+class GroupForm(forms.ModelForm):
+    name = forms.CharField(max_length=128, help_text="Please enter the name of the Chat.")
+    game = forms.ModelChoiceField(queryset=Game.objects.all(), help_text='Game')
+
+    class Meta:
+        model = Group
+        fields = ('name', 'game',)

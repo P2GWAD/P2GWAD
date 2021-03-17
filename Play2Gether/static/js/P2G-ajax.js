@@ -60,4 +60,15 @@ $(document).ready(function(){
             });
         };
     });
+
+    $('.rango-add-user').click(function(){
+        var clickedButton = $(this);
+        var username = $(this).attr('data-username');
+        var user_id = $(this).attr('data-user-id');
+        document.getElementById('current-members-names').append(", " + username);
+        var curr_ids = document.getElementById('current-members-ids').getAttribute('value');
+        var new_ids = curr_ids + ',' + user_id;
+        document.getElementById('current-members-ids').setAttribute('value', new_ids);
+        clickedButton.hide();
+    });
 });
