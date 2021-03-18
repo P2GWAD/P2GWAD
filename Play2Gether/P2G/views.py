@@ -1,12 +1,17 @@
+import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 
-from P2G.models import Category, Game
-from P2G.forms import CategoryForm, GameForm, UserForm, UserProfileForm
+from P2G.models import Category, Game, User, UserProfile, Group, Message
+from P2G.forms import CategoryForm, GameForm, UserProfileForm, GroupForm
+
 
 def index(request):
     return render(request, 'P2G/index.html')
@@ -16,23 +21,12 @@ def about(request):
     return render(request, 'P2G/about.html')
 
 
-def account(request):
-    return render(request, 'P2G/account.html')
-
-
-def friends(request):
-    return render(request, 'P2G/friends.html')
-
 def groups(request):
     return render(request, 'P2G/groups.html')
 
 
 def highscores(request):
     return render(request, 'P2G/highscores.html')
-
-
-def otherPlayers(request):
-    return render(request, 'P2G/other_players.html')
 
 
 def playRandom(request):
@@ -52,10 +46,12 @@ class GamesView(View):
 
 
 class AddCategoryView(View):
+    @method_decorator(login_required)
     def get(self, request):
         form = CategoryForm()
         return render(request, 'P2G/add_category.html', {'form': form})
 
+    @method_decorator(login_required)
     def post(self, request):
         form = CategoryForm(request.POST)
 
@@ -80,6 +76,7 @@ class CategoryView(View):
 
 
 class AddGameView(View):
+    @method_decorator(login_required)
     def get(self, request, category_id):
         if int(category_id) != -1:
             category = Category.objects.get(id=category_id)
@@ -90,6 +87,7 @@ class AddGameView(View):
         context_dict = {'form': form, 'category_id': category_id}
         return render(request, 'P2G/add_game.html', context_dict)
 
+    @method_decorator(login_required)
     def post(self, request, category_id):
         form = GameForm(request.POST)
 
@@ -110,19 +108,6 @@ class GameView(View):
         return render(request, 'P2G/game.html', context_dict)
 
 
-def get_game_list(max_results=0, starts_with=''):
-    game_list = []
-
-    if starts_with:
-        game_list = Game.objects.filter(name__istartswith=starts_with)
-
-    if max_results > 0:
-        if len(game_list) > max_results:
-            game_list = game_list[:max_results]
-
-    return game_list
-
-
 class GameSuggestionView(View):
     def get(self, request):
         if 'suggestion' in request.GET:
@@ -130,50 +115,276 @@ class GameSuggestionView(View):
         else:
             suggestion = ''
 
-        game_list = get_game_list(max_results=10, starts_with=suggestion)
+        games_query = Game.objects.all()
+        games = []
+        for game in games_query:
+            if game.name.startswith(suggestion):
+                games.append(game)
 
-        if len(game_list) == 0:
-            game_list = Game.objects.order_by('-likes')
+        if len(games) == 0:
+            games = Game.objects.all()
 
-        return render(request, 'P2G/game-suggestion.html', {'games': game_list})
+        return render(request, 'P2G/game-suggestion.html', {'games': games})
 
-      
-def register(request):
-    registered = False
+
+def register_profile(request):
+    form = UserProfileForm()
+
     if request.method == 'POST':
-        user_form = UserForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save()
-            user.set_password(user.password)
-            user.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            if 'profile_image' in request.FILES:
-                profile.picture = request.FILES['profile_image']
-            profile.save()
-            registered = True 
+        form = UserProfileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+            return redirect(reverse('P2G:index'))
         else:
-            print(user_form.errors, profile_form.errors)
-    else:
-        user_form = UserForm()
-        profile_form = UserProfileForm()
-    return render(request, 'P2G/register.html', context={'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
+            print(form.errors)
+    context_dict = {'form': form}
+    return render(request, 'P2G/profile_registration.html', context_dict)
 
-  
-def user_login(request):
-    if request.method == 'POST'
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user:
-            if user.is_active:
-                login(request, user)
-                return redirect(reverse('P2G:about'))
-            else:
-                print(f"Invalid login details: {username}, {password}")
-                return HttpResponse("Invalid login details supplied.")
+
+class ProfileView(View):
+    def get_user_details(self, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return None
+
+        user_profile = UserProfile.objects.get_or_create(user=user)[0]
+        form = UserProfileForm({'bio': user_profile.bio,
+                                'profile_image': user_profile.profile_image})
+        return user, user_profile, form
+
+    @method_decorator(login_required)
+    def get(self, request, username):
+        try:
+            (user, user_profile, form) = self.get_user_details(username)
+        except TypeError:
+            return redirect(reverse('P2G:index'))
+
+        context_dict = {'user_profile': user_profile,
+                        'selected_user': user,
+                        'form': form}
+        return render(request, 'P2G/account.html', context_dict)
+
+    @method_decorator(login_required)
+    def post(self, request, username):
+        try:
+            (user, user_profile, form) = self.get_user_details(username)
+        except TypeError:
+            return redirect(reverse('P2G:index'))
+
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+
+        if form.is_valid():
+            form.save(commit=True)
+            return redirect('P2G:account', user.username)
         else:
-            return render(request, 'P2G/login.html')
+            print(form.errors)
+
+        context_dict = {'user_profile': user_profile,
+                        'selected_user': user,
+                        'form': form}
+        return render(request, 'P2G/account.html', context_dict)
 
 
+class ListOtherPlayersView(View):
+    @method_decorator(login_required)
+    def get(self, request, username):
+        profiles = UserProfile.objects.all()
+        user = User.objects.get(username=username)
+        user_profile = UserProfile.objects.get(user=user)
+        friends = user_profile.friends.all()
+        return render(request, 'P2G/other_players.html', {'user_profile_list': profiles, 'friends': friends})
+
+
+class AddFriendView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        user_id = int(request.GET['user_id'])
+        friend_id = int(request.GET['friend_id'])
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
+        friend = User.objects.get(id=friend_id)
+        friend_profile = UserProfile.objects.get(user=friend)
+        user_profile.friends.add(friend_profile)
+        return HttpResponse('Done')
+
+
+class FriendsView(View):
+    @method_decorator(login_required)
+    def get(self, request, username):
+        user = User.objects.get(username=username)
+        user_profile = UserProfile.objects.get(user=user)
+        friends = user_profile.friends.all()
+        return render(request, 'P2G/friends.html', {'friends': friends})
+
+
+class RemoveFriendView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        user_id = int(request.GET['user_id'])
+        friend_id = int(request.GET['friend_id'])
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
+        friend = User.objects.get(id=friend_id)
+        friend_profile = UserProfile.objects.get(user=friend)
+        user_profile.friends.remove(friend_profile)
+        friends = user_profile.friends.all()
+        return render(request, 'P2G/friend_list.html', {'friends': friends})
+
+
+class SearchFriendsView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        user_id = int(request.GET['user_id'])
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
+
+        if 'suggestion' in request.GET:
+            suggestion = request.GET['suggestion']
+        else:
+            suggestion = ''
+
+        friends_query = user_profile.friends.all()
+        friends = []
+        for friend in friends_query:
+            if friend.user.username.startswith(suggestion):
+                friends.append(friend)
+
+        if len(friends) == 0:
+            friends = user_profile.friends.all()
+
+        return render(request, 'P2G/friend_list.html', {'friends': friends})
+
+
+class SearchOthersView(View):
+    def get(self, request):
+        user_id = int(request.GET['user_id'])
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
+        friends = user_profile.friends.all()
+
+        if 'suggestion' in request.GET:
+            suggestion = request.GET['suggestion']
+        else:
+            suggestion = ''
+
+        user_profiles = UserProfile.objects.all()
+        user_profile_list = []
+        for user_profile in user_profiles:
+            if user_profile.user.username.startswith(suggestion):
+                user_profile_list.append(user_profile)
+
+        if len(user_profile_list) == 0:
+            user_profile_list = UserProfile.objects.all()
+
+        return render(request, 'P2G/others_list.html', {'user_profile_list': user_profile_list, 'friends': friends})
+
+
+class GroupView(View):
+    @method_decorator(login_required)
+    def get(self, request, group_id, user_id):
+        group = Group.objects.get(id=int(group_id))
+        context_dict = {}
+        context_dict['group_id'] = group_id
+        context_dict['user_id'] = int(user_id)
+        context_dict['users'] = []
+        for user in group.users.all():
+            context_dict['users'].append(user.user)
+        context_dict['name'] = group.name
+        context_dict['messages'] = Message.objects.filter(group=group).order_by('date')
+        return render(request, 'P2G/group.html', context=context_dict)
+
+
+class GroupAddMessageView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        group_id = request.GET['group_id']
+        group = Group.objects.get(id=group_id)
+        user_id = request.GET['user_id']
+        user = User.objects.get(id=user_id)
+        message = request.GET['message']
+        Message.objects.create(sender=user, content=message, date=timezone.now(), group=group)
+        messages = Message.objects.filter(group=group).order_by('date')
+        return render(request, 'P2G/group_log.html', {'messages': messages})
+
+
+class GroupUpdateView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        group_id = int(request.GET['group_id'])
+        group = Group.objects.get(id=group_id)
+        messages = Message.objects.filter(group=group).order_by('date')
+        return render(request, 'P2G/group_log.html', {'messages': messages})
+
+
+class MessageCheckView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        latest_client = int(request.GET['latest_message_id'])
+        group_id = int(request.GET['group_id'])
+        group = Group.objects.get(id=group_id)
+        latest_server = Message.objects.filter(group=group).order_by('-date')[0].id
+
+        if latest_client == latest_server:
+            out = False
+        else:
+            out = latest_server
+        return HttpResponse(out)
+
+
+class NewGroupView(View):
+    @method_decorator(login_required)
+    def get(self, request, user_id, game_id):
+        print(game_id)
+        context_dict ={}
+        if int(game_id) != -1:
+            game = Game.objects.get(id=int(game_id))
+            form = GroupForm(initial={'game':game})
+        else:
+            form = GroupForm()
+        context_dict['form'] = form
+        context_dict['user_id'] = int(user_id)
+        context_dict['user_profile_list'] = UserProfile.objects.all()
+        return render(request, 'P2G/new_group.html', context_dict)
+
+    @method_decorator(login_required)
+    def post(self, request, user_id, game_id):
+        user_ids = request.POST.get('users').split(',')
+        user_ids.append(user_id)
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            for u_id in user_ids:
+                user = User.objects.get(id=int(u_id))
+                user_profile = UserProfile.objects.get(user=user)
+                form.instance.users.add(user_profile)
+            return redirect(reverse('P2G:index'))
+        else:
+            print(form.errors)
+        return redirect(reverse('P2G:new_group',
+                                kwargs={'user_id': user_id, 'game_id': game_id}))
+
+
+class GroupsView(View):
+    @method_decorator(login_required)
+    def get(self, request, user_id):
+        user = User.objects.get(id=int(user_id))
+        user_profile = UserProfile.objects.get(user=user)
+        groups = user_profile.group_set.all()
+
+        group_collection = []
+        for group in groups:
+            dict = {}
+            dict['group_id'] = group.id
+            dict['name'] = group.name
+            users = []
+            for u in group.users.all():
+                if u.user.id != int(user_id):
+                    users.append(u.user.username)
+            dict['users'] = users
+            group_collection.append(dict)
+
+        return render(request, 'P2G/groups.html', {'groups': group_collection, 'user_id': user_id})
