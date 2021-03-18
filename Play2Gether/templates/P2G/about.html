@@ -1,10 +1,33 @@
-{% extends 'P2G/base.html' %}
+<!DOCTYPE html>
+
 {% load staticfiles %}
 
-{% block title_block %}
-    About
-{% endblock %}
+{% extends 'P2G/base.html' %}
 
-{% block body_block %}
-    About
-{% endblock %}
+<html>
+	
+	<head>
+		<title>
+		{% block title_block %}
+			About</>
+		{% endblock %}
+	</head>
+
+	<body>
+		{% block body_block %}
+		<h1>Join Play2Gether today and game with your
+			friends all around the world!</h1>
+
+		<div>
+		
+		P2G lets you play with friends, new and old.
+
+			<ul>
+				<li><a href="/django/base/">Back to the home page.</a></li>
+			</ul>
+		
+		</div>
+		{% endblock %}
+	</body>
+
+</html>
