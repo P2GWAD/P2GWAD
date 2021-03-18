@@ -107,19 +107,6 @@ class GameView(View):
         context_dict = {'game': game}
         return render(request, 'P2G/game.html', context_dict)
 
-@login_required()
-def get_game_list(max_results=0, starts_with=''):
-    game_list = []
-
-    if starts_with:
-        game_list = Game.objects.filter(name__istartswith=starts_with)
-
-    if max_results > 0:
-        if len(game_list) > max_results:
-            game_list = game_list[:max_results]
-
-    return game_list
-
 
 class GameSuggestionView(View):
     def get(self, request):
@@ -128,12 +115,16 @@ class GameSuggestionView(View):
         else:
             suggestion = ''
 
-        game_list = get_game_list(max_results=10, starts_with=suggestion)
+        games_query = Game.objects.all()
+        games = []
+        for game in games_query:
+            if game.name.startswith(suggestion):
+                games.append(game)
 
-        if len(game_list) == 0:
-            game_list = Game.objects.order_by('-likes')
+        if len(games) == 0:
+            games = Game.objects.all()
 
-        return render(request, 'P2G/game-suggestion.html', {'games': game_list})
+        return render(request, 'P2G/game-suggestion.html', {'games': games})
 
 
 def register_profile(request):
@@ -346,15 +337,21 @@ class MessageCheckView(View):
 
 class NewGroupView(View):
     @method_decorator(login_required)
-    def get(self, request, user_id):
+    def get(self, request, user_id, game_id):
+        print(game_id)
         context_dict ={}
-        context_dict['form'] = GroupForm()
+        if int(game_id) != -1:
+            game = Game.objects.get(id=int(game_id))
+            form = GroupForm(initial={'game':game})
+        else:
+            form = GroupForm()
+        context_dict['form'] = form
         context_dict['user_id'] = int(user_id)
         context_dict['user_profile_list'] = UserProfile.objects.all()
         return render(request, 'P2G/new_group.html', context_dict)
 
     @method_decorator(login_required)
-    def post(self, request, user_id):
+    def post(self, request, user_id, game_id):
         user_ids = request.POST.get('users').split(',')
         user_ids.append(user_id)
         form = GroupForm(request.POST)
@@ -368,7 +365,7 @@ class NewGroupView(View):
         else:
             print(form.errors)
         return redirect(reverse('P2G:new_group',
-                                kwargs={'user_id': user_id}))
+                                kwargs={'user_id': user_id, 'game_id': game_id}))
 
 
 class GroupsView(View):

@@ -28,6 +28,6 @@ urlpatterns = [
     path('group_add_message/', views.GroupAddMessageView.as_view(), name='group_add_message'),
     path('message_check/', views.MessageCheckView.as_view(), name='message_check'),
     path('group_update/', views.GroupUpdateView.as_view(), name='group_update'),
-    path('new_group/<user_id>/', views.NewGroupView.as_view(), name='new_group'),
+    path('new_group/<user_id>/<game_id>/', views.NewGroupView.as_view(), name='new_group'),
     path('groups/<user_id>/', views.GroupsView.as_view(), name='groups'),
 ]

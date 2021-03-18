@@ -35,7 +35,7 @@
                         {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account' user.username%}">Account</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' user.id %}">Groups</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:new_group' user.id %}">New Group</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:new_group' user.id -1%}">New Group</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends' user.username%}">Friends</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' user.username%}">Search Players</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>

@@ -11,7 +11,7 @@
             <h1> Create a New Group</h1>
             <form id="chat-form"
                   method="POST"
-                  action="{% url 'P2G:new_group' user_id %}">
+                  action="{% url 'P2G:new_group' user_id -1 %}">
 
                 {% csrf_token %}
                 {% for field in form.visible_fields %}
@@ -47,7 +47,7 @@
                                          height="64"
                                          alt="Missing Picture"/>
                                     {{ list_user.user.username }}
-                                    <input class="btn btn-primary rango-add-user"
+                                    <input class="btn btn-primary P2G-add-user"
                                            type="button"
                                            value="Add"
                                            style="float: right; margin: 10px;"

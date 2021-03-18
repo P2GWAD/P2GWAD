@@ -61,7 +61,7 @@ $(document).ready(function(){
         };
     });
 
-    $('.rango-add-user').click(function(){
+    $('.P2G-add-user').click(function(){
         var clickedButton = $(this);
         var username = $(this).attr('data-username');
         var user_id = $(this).attr('data-user-id');
