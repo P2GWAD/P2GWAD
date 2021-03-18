@@ -1,0 +1,43 @@
+{% extends 'P2G/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Add Category
+{% endblock %}
+
+{% block body_block %}
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1> Add a new Category</h1>
+
+            What to do if Category already exists
+            <br>
+            Adjust style of the page
+        </div>
+    </div>
+
+     <div class="container">
+        <div class="row">
+            <form id="category_form" method="post" action="{% url 'P2G:add_category' %}">
+                {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                    {{ field.errors }}
+                    {{ field.help_text }}
+                    {{ field }}
+                    <div class="p-2"></div>
+                {% endfor %}
+
+                <br/>
+                    <button class="btn btn-primary" type="submit" name="submit">
+                        Add Category
+                    </button>
+                    <div class="p-5"></div>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}
