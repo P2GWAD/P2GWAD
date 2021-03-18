@@ -1,91 +1,128 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load rango_template_tags %}
 
 <html lang="en">
-    <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Jekyll v3.8.5">
-    <link rel="icon" href="{% static 'images/Logo.ico' %}">
-    <title>
-        P2G - {% block title_block %}Play & Connect{% endblock %}
-    </title>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		Play2gether -
+			{% block title_block %}
+				Play Games and make Friends
+			{% endblock %}
+	</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<link href="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.css" rel="stylesheet">
+</head>
+<body>
 
-    <!-- Bootstrap core CSS -->
-    <link href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<!-- Navigation -->
+<header>
 
-    <!-- Custom styles for this template -->
-    <link href="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.css" rel="stylesheet">
-    </head>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark p-2">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<div class="collapse navbar-collapse" id="navbarCollapse">
+			<ul class="navbar-nav mr-auto">
+			    <li class="nav-item"><a class="nav-link" href="{% url 'P2G:index' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account'%}">Account</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' %}">Groups</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends'%}">Friends</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' %}">Find Friends</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:playRandom' %}">Play Random</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'P2G:highscores' %}">High Scores</a></li>
+			</ul>
+			<ul class="navbar-nav  ml-auto">
+				<li class="nav-item"><a class="nav-link" href="{% url 'P2G:register' %}">Register</a></li>
+				<li class="nav-item"><a class="nav-link" href="{% url 'P2G:login' %}">Log In</a></li>
+			</ul>
+		</div>
+	</nav>
+</header>
 
-    <body>
-        <header>
-            <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark p-0">
-                <a class="navbar-brand p-2" href="{% url 'P2G:index' %}">P2G</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
 
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:index' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:about' %}">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account'%}">Account</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' %}">Groups</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends'%}">Friends</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' %}">Find Friends</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:playRandom' %}">Play Random</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:highscores' %}">High Scores</a></li>
-			<li class="nav-item"><a class="nav-link" href="{% url 'P2G:register' %}">Register</a></li>
-			<li class="nav-item"><a class="nav-link" href="{% url 'P2G:login' %}">Log In</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
+<!--- Sidebar -->
+<div class="container-fluid">
+	<div class="row">
+		<nav class="col-md-2 d-none d-md-block bg-light sidebar pt-5">
+			<div class="sidebar-sticky">
+				<ul class="navbar-nav nav-justified mr-auto">
+				</br></br></br>
+				<li class="nav-item">
+				<input type="text" placeholder="Search">
+				</li>
+				</br></br></br>
+					<li class="nav-item">
+						<h5>
+							<span data-feather="award"></span> Most Liked Categories
+						</h5>
+					</li>
+					{% if categories %}
+						<ul>
+							{% for category in categories %}
+								<li class="nav-item"><a class="nav-link" href="{% url 'P2G:show_category' category_id %}"> {{ category.name }}</a></li>
+							{% endfor %}
+						</ul>
+					{% else %}
+						<strong>There are no categories present.</strong>
+					{% endif %}
+					</br></br></br>
+					<li class="nav-item">
+						<h5>
+							<span data-feather="award"></span> Most Liked Games
+						</h5>
+					</li>
+					{% if categories %}
+						<ul>
+							{% for game in games %}
+								<li><a href="{% url 'P2G:show_game' game_id %}"> {{ game.name }}</a></li>
+							{% endfor %}
+						</ul>
+					{% else %}
+						<strong>There are no games present.</strong>
+					{% endif %}
+			</div>
+		</nav>
+		
+		
+		<main role="main" class="col-md-10 ml-sm-auto col-lg-10">
+			<!--- Welcome Section -->
+			<div class="jumbotron p-4" style="background: #046B33">
+				<div class="container">
+					<h1 class="jumbotron-heading text-white">Play2gether</h1>
+					<h4 class="text-white">Play Games and Meet Friends</h4>
+				</div>
+			</div>
 
-        <div class="container-fluid">
-            <div class="row">
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="w-75 ml-3">
-                        <input type="search"
-                               id="search-input"
-                               class="form-control ds-input"
-                               placeholder="Search..." />
-                    </div>
+			<!--- App Explanation -->
+			<div class="container-fluid col-md-12 col-lg-12">
+				{% block body_block %}{% endblock %}
+			</div>
+		</main>
+	</div>
+</div>
 
-                    <div class="sidebar-sticky" id="categories-listing">
-                    {% block sidebar_block %}
-                        Sidebar
-                    {% endblock %}
-                    </div>
-                </nav>
 
-                <main role="main" class="col-md-9  ml-sm-auto col-lg-10 px-4">
-                    {% block body_block %}{% endblock %}
-
-                    <!-- FOOTER -->
-                    <footer>
-                        <p class="float-right"><a href="#">Back to top</a></p>
-                        <p>&copy; 2020 Tango With Django 2 &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-                    </footer>
-                </main>
-            </div>
-        </div>
-
-        <!-- Bootstrap core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')</script><script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-zDnhMsjVZfS3hiP7oCBRmfjkQC4fzxVxFhBx8Hkz2aZX8gEvA/jsP3eXRCvzTofP" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-        <script src="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.js"></script>
-
-        <script src="{% static 'js/jquery-3.3.1.min.js' %}" crossorigin="anonymous"></script>
-        <script src="{% static 'js/P2G-ajax.js' %}" crossorigin="anonymous"></script>
-
-        {% block further_scripts %}
-        {% endblock %}
-    </body>
+<!-- Bootstrap core JavaScript -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')
+</script>
+<script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/
+feather.min.js">
+</script>
+<script src="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.js">
+</script>
+</body>
 </html>
