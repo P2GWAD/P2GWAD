@@ -121,9 +121,6 @@ class GameSuggestionView(View):
             if game.name.startswith(suggestion):
                 games.append(game)
 
-        if len(games) == 0:
-            games = Game.objects.all()
-
         return render(request, 'P2G/game-suggestion.html', {'games': games})
 
 
@@ -253,9 +250,6 @@ class SearchFriendsView(View):
             if friend.user.username.startswith(suggestion):
                 friends.append(friend)
 
-        if len(friends) == 0:
-            friends = user_profile.friends.all()
-
         return render(request, 'P2G/friend_list.html', {'friends': friends})
 
 
@@ -276,9 +270,6 @@ class SearchOthersView(View):
         for user_profile in user_profiles:
             if user_profile.user.username.startswith(suggestion):
                 user_profile_list.append(user_profile)
-
-        if len(user_profile_list) == 0:
-            user_profile_list = UserProfile.objects.all()
 
         return render(request, 'P2G/others_list.html', {'user_profile_list': user_profile_list, 'friends': friends})
 
