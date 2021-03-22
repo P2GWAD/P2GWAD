@@ -6,10 +6,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 
-from P2G.models import Category, Game, User, UserProfile, Group, Message
+from P2G.models import Category, Game, User, UserProfile, Group, Message, Score
 from P2G.forms import CategoryForm, GameForm, UserProfileForm, GroupForm
 
 
@@ -285,7 +284,10 @@ class GroupView(View):
         for user in group.users.all():
             context_dict['users'].append(user.user)
         context_dict['name'] = group.name
+        context_dict['game'] = group.game
         context_dict['messages'] = Message.objects.filter(group=group).order_by('date')
+        context_dict['scores'] = Score.objects.filter(group=group).order_by('-score')[:5]
+        context_dict['approvals'] = Score.objects.filter(approved=False).exclude(user=user_id)
         return render(request, 'P2G/group.html', context=context_dict)
 
 
@@ -379,3 +381,44 @@ class GroupsView(View):
             group_collection.append(dict)
 
         return render(request, 'P2G/groups.html', {'groups': group_collection, 'user_id': user_id})
+
+
+class AddScoreView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        group_id = int(request.GET['group_id'])
+        group = Group.objects.get(id=group_id)
+
+        if int(request.GET['user_id']) != -1:
+            user_id = int(request.GET['user_id'])
+            score = int(request.GET['score'])
+            user = User.objects.get(id=user_id)
+            date = timezone.now()
+            game = group.game
+            Score.objects.create(user=user, score=score, date=date, game=game, group=group)
+
+        scores = Score.objects.filter(group=group).order_by('-score')[:5]
+        return render(request, 'P2G/highscore_table.html', {'scores': scores})
+
+
+class ApproveScoreView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        user_id = int(request.GET['user_id'])
+        if int(request.GET['score_id']) != -1:
+            score_id = int(request.GET['score_id'])
+            score = Score.objects.get(id=score_id)
+            score.approved = True
+            score.save()
+        approvals = Score.objects.filter(approved=False).order_by('date').exclude(user=user_id)
+        return render(request, 'P2G/approval_table.html', {'approvals': approvals})
+
+
+class RemoveScoreView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        score_id = int(request.GET['score_id'])
+        user_id = int(request.GET['user_id'])
+        Score.objects.filter(id=score_id).delete()
+        approvals = Score.objects.filter(approved=False).order_by('date').exclude(user=user_id)
+        return render(request, 'P2G/approval_table.html', {'approvals': approvals})
