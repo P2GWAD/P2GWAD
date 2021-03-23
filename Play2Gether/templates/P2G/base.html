@@ -27,6 +27,8 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:index' %}">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:about' %}">About</a></li>
+					</ul>
+					<ul class="navbar-nav ml-auto">
                         {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account' user.username%}">Account</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' user.id %}">Groups</a></li>
@@ -35,7 +37,6 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' user.username%}">Search Players</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:playRandom' %}">Play Random</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:highscores' %}">High Scores</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'auth_logout' %}?next=/P2G/">Logout</a></li>
                         {% else %}
@@ -70,11 +71,11 @@
                             {% if categories %}
                                 <ul>
                                     {% for category in categories %}
-                                         <li class="nav-item"><a href="{% url 'P2G:show_category' category.id %}"> {{ category.name }} </a>
+                                         <li class="nav-item"><a href="{% url 'P2G:show_category' category_id %}"> {{ category.name }} </a>
                                     {% endfor %}
                                 </ul>
                             {% else %}
-                                <strong>There are no categories present.</strong>
+                                <strong class = "nav-item">There are no categories present.</strong>
                             {% endif %}
                             <br>
                             <br>
@@ -87,11 +88,11 @@
                             {% if categories %}
                                 <ul>
                                     {% for game in games %}
-                                        <li class="nav-item"><a href="{% url 'P2G:show_game' game.id %}">{{ game.name }}</a></li>
+                                        <li class="nav-item"><a href="{% url 'P2G:show_game' game_id %}">{{ game.name }}</a></li>
                                     {% endfor %}
                                 </ul>
                             {% else %}
-                                <strong>There are no games present.</strong>
+                                <strong class = "nav-item">There are no games present.</strong>
                             {% endif %}
                         </ul>
                     </div>
@@ -105,7 +106,13 @@
                             <h4 class="text-white">Play Games and Meet Friends</h4>
                         </div>
                     </div>
-
+					
+					<div class = "row" style = "padding-left:15px">
+						<button type="button" style="background:#046B33"><a href="{% url 'P2G:playRandom' %}" style="color:white"><h1>Play Random</h1></a></button>
+					</div>
+					
+					</br></br></br>
+					
                     {% block body_block %}{% endblock %}
 
                     <!-- FOOTER -->
