@@ -25,7 +25,17 @@ def groups(request):
 
 
 def highscores(request):
-    return render(request, 'P2G/highscores.html')
+    game_list = Game.objects
+    context_dict = {}
+    context_dict[games] = game_list
+    game_counter = 0
+    for game in game_list:
+        score_list = Score.objects.filter(game=game).order_by('-score')[:10]
+        context_dict[game.name] = score_list
+	game_counter = game_counter + 1
+
+    #return render(request, 'P2G/highscores.html')
+    return render(request, 'P2G/highscores.html', context=context_dict)
 
 
 def playRandom(request):
