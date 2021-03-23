@@ -30,4 +30,7 @@ urlpatterns = [
     path('group_update/', views.GroupUpdateView.as_view(), name='group_update'),
     path('new_group/<user_id>/<game_id>/', views.NewGroupView.as_view(), name='new_group'),
     path('groups/<user_id>/', views.GroupsView.as_view(), name='groups'),
+    path('add_score/', views.AddScoreView.as_view(), name='add_score'),
+    path('approve_score/', views.ApproveScoreView.as_view(), name='approve_score'),
+    path('remove_score/', views.RemoveScoreView.as_view(), name='remove_score'),
 ]

@@ -1,0 +1,43 @@
+{% load staticfiles %}
+<h3>Scores to Approve</h3>
+{% if approvals %}
+    <div style="height: 400px; overflow-y: auto">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col" >User</th>
+                  <th scope="col" style="text-align: center">Date</th>
+                  <th scope="col" >Score</th>
+                  <th scope="col" > </th>
+                  <th scope="col" > </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in approvals%}
+                    <tr>
+                    <td>{{ score.user.username }}</td>
+                    <td style="text-align: center">{{ score.date }}</td>
+                    <td style="text-align: center">{{ score.score }}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm group-approve-score"
+                                type="button"
+                                data-score-id="{{ score.id }}">
+                            Approve
+                            </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm group-deny-score"
+                                type="button"
+                                data-score-id="{{ score.id }}">
+                            Deny
+                        </button>
+                    </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    All Scores are Approved
+{% endif %}
+<script src="{% static 'js/P2G-group.js' %}" crossorigin="anonymous"></script>
