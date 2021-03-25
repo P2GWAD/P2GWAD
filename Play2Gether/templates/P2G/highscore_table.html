@@ -1,0 +1,24 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col" >Rank</th>
+            <th scope="col" >User</th>
+            <th scope="col" >Score</th>
+            <th scope="col" style="text-align: center">Approved</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for score in scores%}
+            <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ score.user.username }}</td>
+            <td>{{ score.score }}</td>
+            {% if score.approved %}
+                <td style="font-size: 20px; text-align: center">&#10004</td>
+            {% else %}
+                <td style="font-size: 20px; text-align: center">&#10006</td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

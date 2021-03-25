@@ -37,6 +37,7 @@ class UserProfile(models.Model):
 class Group(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     name = models.CharField(max_length=64, null=False)
+    randGroup = models.BooleanField(default=False)
     users = models.ManyToManyField(UserProfile)
 
     def __str__(self):
@@ -53,7 +54,9 @@ class Message(models.Model):
 class Score(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, default=0)
     score = models.IntegerField(default=0, null=False)
+    approved = models.BooleanField(default=False)
     date = models.DateField()
 
     def __str__(self):

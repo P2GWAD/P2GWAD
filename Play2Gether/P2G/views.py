@@ -1,4 +1,4 @@
-import datetime
+import random
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -6,10 +6,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 
-from P2G.models import Category, Game, User, UserProfile, Group, Message
+from P2G.models import Category, Game, User, UserProfile, Group, Message, Score
 from P2G.forms import CategoryForm, GameForm, UserProfileForm, GroupForm
 
 
@@ -21,16 +20,17 @@ def about(request):
     return render(request, 'P2G/about.html')
 
 
-def groups(request):
-    return render(request, 'P2G/groups.html')
-
-
 def highscores(request):
-    return render(request, 'P2G/highscores.html')
+    game_list = Game.objects.all()
+    context_dict = {}
+    context_dict['games'] = game_list
+    game_counter = 0
+    for game in game_list:
+        score_list = Score.objects.filter(game=game).order_by('-score')[:10]
+        context_dict[game.name] = score_list
+        game_counter = game_counter + 1
 
-
-def playRandom(request):
-    return render(request, 'P2G/play_random.html')
+    return render(request, 'P2G/highscores.html', context=context_dict)
 
 class CategoriesView(View):
     def get(self, request):
@@ -91,7 +91,7 @@ class AddGameView(View):
 
         if form.is_valid():
             game = form.save(commit=True)
-            return redirect(reverse('P2G:show_category', kwargs={'category_id': game.category.id}))
+            return redirect(reverse('P2G:show_game', kwargs={'game_id': game.id}))
         else:
             print(form.errors)
 
@@ -103,6 +103,7 @@ class GameView(View):
     def get(self, request, game_id):
         game = Game.objects.get(id=game_id)
         context_dict = {'game': game}
+        context_dict['scores'] = Score.objects.filter(game=game).order_by('-score')[:5]
         return render(request, 'P2G/game.html', context_dict)
 
 
@@ -283,7 +284,10 @@ class GroupView(View):
         for user in group.users.all():
             context_dict['users'].append(user.user)
         context_dict['name'] = group.name
+        context_dict['game'] = group.game
         context_dict['messages'] = Message.objects.filter(group=group).order_by('date')
+        context_dict['scores'] = Score.objects.filter(group=group).order_by('-score')[:5]
+        context_dict['approvals'] = Score.objects.filter(approved=False).exclude(user=user_id)
         return render(request, 'P2G/group.html', context=context_dict)
 
 
@@ -331,7 +335,7 @@ class NewGroupView(View):
         context_dict ={}
         if int(game_id) != -1:
             game = Game.objects.get(id=int(game_id))
-            form = GroupForm(initial={'game':game})
+            form = GroupForm(initial={'game': game})
         else:
             form = GroupForm()
         context_dict['form'] = form
@@ -350,7 +354,8 @@ class NewGroupView(View):
                 user = User.objects.get(id=int(u_id))
                 user_profile = UserProfile.objects.get(user=user)
                 form.instance.users.add(user_profile)
-            return redirect(reverse('P2G:index'))
+            return redirect(reverse('P2G:group',
+                                kwargs={'group_id': form.instance.id, 'user_id': user_id}))
         else:
             print(form.errors)
         return redirect(reverse('P2G:new_group',
@@ -377,3 +382,68 @@ class GroupsView(View):
             group_collection.append(dict)
 
         return render(request, 'P2G/groups.html', {'groups': group_collection, 'user_id': user_id})
+
+
+class AddScoreView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        group_id = int(request.GET['group_id'])
+        group = Group.objects.get(id=group_id)
+
+        if int(request.GET['user_id']) != -1:
+            user_id = int(request.GET['user_id'])
+            score = int(request.GET['score'])
+            user = User.objects.get(id=user_id)
+            date = timezone.now()
+            game = group.game
+            Score.objects.create(user=user, score=score, date=date, game=game, group=group)
+
+        scores = Score.objects.filter(group=group).order_by('-score')[:5]
+        return render(request, 'P2G/highscore_table.html', {'scores': scores})
+
+
+class ApproveScoreView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        user_id = int(request.GET['user_id'])
+        if int(request.GET['score_id']) != -1:
+            score_id = int(request.GET['score_id'])
+            score = Score.objects.get(id=score_id)
+            score.approved = True
+            score.save()
+        approvals = Score.objects.filter(approved=False).order_by('date').exclude(user=user_id)
+        return render(request, 'P2G/approval_table.html', {'approvals': approvals})
+
+
+class RemoveScoreView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        score_id = int(request.GET['score_id'])
+        user_id = int(request.GET['user_id'])
+        Score.objects.filter(id=score_id).delete()
+        approvals = Score.objects.filter(approved=False).order_by('date').exclude(user=user_id)
+        return render(request, 'P2G/approval_table.html', {'approvals': approvals})
+
+
+class PlayRandomView(View):
+    def get(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
+        group = Group.objects.filter(randGroup=True)
+
+        if len(group) == 0:
+            games = Game.objects.all()
+            index = random.randint(0,len(games)-1)
+            game = games[index]
+            name = 'Random Group Playing ' + game.name
+            group = Group.objects.create(game=game, name=name, randGroup=True)
+        else:
+            group = group[0]
+        group.users.add(user_profile)
+
+        if group.users.count() >= 4:
+            group.randGroup = False
+            group.save()
+
+        return redirect(reverse('P2G:group',
+                                kwargs={'group_id': group.id, 'user_id': user_id}))

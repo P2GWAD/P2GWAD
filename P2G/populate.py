@@ -4,7 +4,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 
 import django
 django.setup()
-from P2G.models import Score, Game, Categories, User, Group
+from models import Score, Game, Categories, UserProfile, Group
 
 def populate():
     
@@ -50,9 +50,9 @@ def add_category(name, likes):
     c.save()
     return c
 
-def add_user(games, groups, friends, name, email, profile_image, bio):
-    u = User.objects.get_or_create(games=games, groups=groups, friends=friends, name=name,
-                                   email=email, profile_image=profile_image, bio=bio)
+def add_user(user, profile_image, games, groups, friends, bio):
+    u = UserProfile.objects.get_or_create(user=user, profile_image=profile_image
+                                          games=games, groups=groups, friends=friends, bio=bio)
     u.save()
     return u
 
