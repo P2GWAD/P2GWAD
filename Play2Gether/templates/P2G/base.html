@@ -51,6 +51,7 @@
         <div class="container-fluid">
             <div class="row">
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+					</br></br></br>
                     <div class="w-75 ml-3">
                         <input type="search"
                                id="search-input"
@@ -64,14 +65,14 @@
                             <br>
                             <br>
                             <li class="nav-item">
-                                <h5>
+                                <h4>
                                     <span data-feather="award"></span> Most Liked Categories
-                                </h5>
+                                </h4>
                             </li>
                             {% if categories %}
                                 <ul>
                                     {% for category in categories %}
-
+                                        <li class="nav-item" style ="list-style-type: none"><a href="{% url 'P2G:show_category' category.id %}" style= "color:black"><h5> {{ category.name }} </h5></a></li>
                                     {% endfor %}
                                 </ul>
                             {% else %}
@@ -81,14 +82,14 @@
                             <br>
                             <br>
                             <li class="nav-item">
-                                <h5>
+                                <h4>
                                     <span data-feather="award"></span> Most Liked Games
-                                </h5>
+                                </h4>
                             </li>
-                            {% if categories %}
+                            {% if games %}
                                 <ul>
                                     {% for game in games %}
-                                        <li class="nav-item"><a href="{% url 'P2G:show_game' game_id %}">{{ game.name }}</a></li>
+                                        <li class="nav-item" style ="list-style-type: none"><a href="{% url 'P2G:show_game' game.id %}" style= "color:black"><h5>{{ game.name }}</h5></a></li>
                                     {% endfor %}
                                 </ul>
                             {% else %}
@@ -106,15 +107,12 @@
                             <h4 class="text-white">Play Games and Meet Friends</h4>
                         </div>
                     </div>
-					
-					<div class = "row" style = "padding-left:15px">
-						<button type="button" style="background:#046B33"><a href="{% url 'P2G:playRandom' user.id%}" style="color:white"><h1>Play Random</h1></a></button>
-					</div>
-					
 					</br></br></br>
 					
                     {% block body_block %}{% endblock %}
-
+					
+					</br></br></br>
+					
                     <!-- FOOTER -->
                     <footer>
                         <p class="float-right"><a href="#">Back to top</a></p>

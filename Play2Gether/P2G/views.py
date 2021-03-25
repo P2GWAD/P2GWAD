@@ -32,12 +32,10 @@ def highscores(request):
 
     return render(request, 'P2G/highscores.html', context=context_dict)
 
-
 class CategoriesView(View):
     def get(self, request):
         category_list = Category.objects.all().order_by('-likes')
         return render(request, 'P2G/categories.html', {'categories': category_list})
-
 
 class GamesView(View):
     def get(self, request):
