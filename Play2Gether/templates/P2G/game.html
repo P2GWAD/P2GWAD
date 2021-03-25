@@ -8,19 +8,74 @@
 {% block body_block %}
     <div class="jumbotron p-4">
         <div class="container">
+        <div class="row">
+        <div class="col">
             <h1> {{ game.name }} </h1>
-            <form action="{{ game.link}}">
-                <button type="submit">Go to Game</button>
-            </form>
-            <button class="btn btn-info btn-sm P2G new-game-group"
-                    type="button"
-                    data-id="{{ game.id }}"
-                    data-name="{{ game.name }}"
-                    data-link-="{{ game.link }}">
+            {% if game.likes != 1 %}
+                ({{ game.likes }} Likes)
+            {% elif game.likes > 1 %}
+                ({{ game.likes }} Like)
+            {% endif %}
+            {% if game.play_count != 1 %}
+                ({{ game.play_count }} Games played)
+            {% elif game.play_count > 1 %}
+                ({{ game.play_count }} Games played)
+            {% endif %}
+            <br>
+            <a href="{{ game.link }}" class="btn btn-primary">
+                Go to Game Webpage
+            </a>
+            <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn btn-primary">
                 New Group
-            </button>
+            </a>
             <br>
             {{ game.description }}
+        </div>
+        <div class="col">
+            <h1> Highscores </h1>
+            {% if scores %}
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col" >Rank</th>
+                      <th scope="col" >User</th>
+                      <th scope="col" >Score</th>
+                      <th scope="col" style="text-align: center">Approved</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for score in scores%}
+                        {% if score.user.id == user_id %}
+                        <tr class="table-success">
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td> You </td>
+                            <td>{{ score.score }}</td>
+                            {% if score.approved %}
+                                <td style="font-size: 20px; text-align: center">&#10004</td>
+                            {% else %}
+                                <td style="font-size: 20px; text-align: center">&#10006</td>
+                            {% endif %}
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ score.user.username }}</td>
+                            <td>{{ score.score }}</td>
+                            {% if score.approved %}
+                                <td style="font-size: 20px; text-align: center">&#10004</td>
+                            {% else %}
+                                <td style="font-size: 20px; text-align: center">&#10006</td>
+                            {% endif %}
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+            {% else %}
+                There are no scores yet.
+            {% endif %}
+        </div>
+        </div>
         </div>
     </div>
 
