@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rango.models import UserProfile
+from P2G.models import UserProfile
 
 # Register your models here.
 

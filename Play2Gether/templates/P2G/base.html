@@ -4,11 +4,6 @@
 <html lang="en">
     <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Jekyll v3.8.5">
-    <link rel="icon" href="{% static 'images/Logo.ico' %}">
     <title>
         P2G - {% block title_block %}Play & Connect{% endblock %}
     </title>
@@ -32,16 +27,22 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:index' %}">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:about' %}">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account'%}">Account</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' %}">Groups</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends'%}">Friends</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' %}">Find Friends</a></li>
+					</ul>
+					<ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account' user.username%}">Account</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' user.id %}">Groups</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:new_group' user.id -1%}">New Group</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends' user.username%}">Friends</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' user.username%}">Search Players</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:playRandom' %}">Play Random</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:highscores' %}">High Scores</a></li>
-			<li class="nav-item"><a class="nav-link" href="{% url 'P2G:register' %}">Register</a></li>
-			<li class="nav-item"><a class="nav-link" href="{% url 'P2G:login' %}">Log In</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'auth_logout' %}?next=/P2G/">Logout</a></li>
+                        {% else %}
+			            <li class="nav-item"><a class="nav-link" href="{% url 'registration_register' %}">Register Here</a></li>
+                        <li class="nav-item "><a class="nav-link" href="{% url 'auth_login' %}">Login</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
@@ -57,14 +58,61 @@
                                placeholder="Search..." />
                     </div>
 
-                    <div class="sidebar-sticky" id="categories-listing">
-                    {% block sidebar_block %}
-                        Sidebar
-                    {% endblock %}
+                    <div class="sidebar-sticky">
+                        <ul class="navbar-nav nav-justified mr-auto">
+                            <br>
+                            <br>
+                            <br>
+                            <li class="nav-item">
+                                <h5>
+                                    <span data-feather="award"></span> Most Liked Categories
+                                </h5>
+                            </li>
+                            {% if categories %}
+                                <ul>
+                                    {% for category in categories %}
+                                         <li class="nav-item"><a href="{% url 'P2G:show_category' category_id %}"> {{ category.name }} </a>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <strong class = "nav-item">There are no categories present.</strong>
+                            {% endif %}
+                            <br>
+                            <br>
+                            <br>
+                            <li class="nav-item">
+                                <h5>
+                                    <span data-feather="award"></span> Most Liked Games
+                                </h5>
+                            </li>
+                            {% if categories %}
+                                <ul>
+                                    {% for game in games %}
+                                        <li class="nav-item"><a href="{% url 'P2G:show_game' game_id %}">{{ game.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <strong class = "nav-item">There are no games present.</strong>
+                            {% endif %}
+                        </ul>
                     </div>
                 </nav>
 
                 <main role="main" class="col-md-9  ml-sm-auto col-lg-10 px-4">
+                    <!--- Welcome Section -->
+                    <div class="jumbotron p-4" style="background: #046B33">
+                        <div class="container">
+                            <h1 class="jumbotron-heading text-white">Play2gether</h1>
+                            <h4 class="text-white">Play Games and Meet Friends</h4>
+                        </div>
+                    </div>
+					
+					<div class = "row" style = "padding-left:15px">
+						<button type="button" style="background:#046B33"><a href="{% url 'P2G:playRandom' %}" style="color:white"><h1>Play Random</h1></a></button>
+					</div>
+					
+					</br></br></br>
+					
                     {% block body_block %}{% endblock %}
 
                     <!-- FOOTER -->

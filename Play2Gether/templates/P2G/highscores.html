@@ -6,5 +6,37 @@
 {% endblock %}
 
 {% block body_block %}
-    Highscores
+	Highscores
+	<div style="overflow-x:auto;">
+		<style>
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		th, td {
+			padding: 15px;
+		</style>
+	{% for game in games %}
+		<div>
+		<table>
+			<table style="float: left">
+			<caption>Highscores for <li>{{ game }}</li></caption>
+			<tr>
+				<th>Rank</th>
+				<th>User</th>
+				<th>Score</th>
+			</tr>
+		{% rank counter = 1 %}
+		{% for score in game %}
+			<tr>
+				<td><li>{{ rank_counter }}</li>.</td>
+				<td><li>{{ score.name }}</li></td>
+				<td><li>{{ score.score }}</li></td>
+			</tr>
+			{% rank_counter = rank_counter + 1 %}
+		{% endfor %}
+		</table>
+		</div>
+	{% endfor %}
+	</div>
 {% endblock %}

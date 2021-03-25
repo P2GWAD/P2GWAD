@@ -1,7 +1,8 @@
 from django import forms
 from P2G.models import Category, Game
 from django.contrib.auth.models import User
-from rango.models import Category, Game, Group, , UserProfile, Score
+from P2G.models import Category, Game, Group, UserProfile, Score
+
 
 class CategoryForm(forms.ModelForm):
     name = forms.CharField(max_length=64, help_text="Please enter the category name.")
@@ -11,7 +12,7 @@ class CategoryForm(forms.ModelForm):
 
     class Meta:
         model = Category
-        fields = ('name', 'description', )
+        fields = ('name', 'description',)
 
 
 class GameForm(forms.ModelForm):
@@ -21,20 +22,25 @@ class GameForm(forms.ModelForm):
     likes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     description = forms.CharField(max_length=4096, help_text="Please give a brief description.",
                                   widget=forms.Textarea(attrs={'cols': 40, 'rows': 10}))
-    category = forms.ModelChoiceField(queryset=Category.objects.all(), help_text= 'Category')
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), help_text='Category')
 
     class Meta:
         model = Game
-        fields = ('name', 'category', 'link', 'description', )
+        fields = ('name', 'category', 'link', 'description',)
 
-class UserForm(forms.ModelForm):
-	password = forms.CharField(widget=forms.PasswordInput())
-	
-	class Meta:
-		model = User
-		fields = ('username', 'email', 'password',)
 
 class UserProfileForm(forms.ModelForm):
-	class Meta:
-		model = UserProfile
-		fields = ('profile_image', 'bio',)
+    bio = forms.CharField(max_length=4096, widget=forms.Textarea(attrs={'cols': 40, 'rows': 10}))
+
+    class Meta:
+        model = UserProfile
+        fields = ('profile_image', 'bio',)
+
+
+class GroupForm(forms.ModelForm):
+    name = forms.CharField(max_length=128, help_text="Please enter the name of the Chat.")
+    game = forms.ModelChoiceField(queryset=Game.objects.all(), help_text='Game')
+
+    class Meta:
+        model = Group
+        fields = ('name', 'game',)

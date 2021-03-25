@@ -9,13 +9,9 @@
                         <a href="{% url 'P2G:show_game' game.id %}">
                             {{ game.name }}
                         </a>
-                        <button class="btn btn-info btn-sm P2G new-game-group"
-                            type="button"
-                            data-id="{{ game.id }}"
-                            data-name="{{ game.name }}"
-                            data-link-="{{ game.link }}">
-                        New Group
-                        </button>
+                        <a href="{% url 'P2G:new_group' user.id game.id%}" class="btn btn-primary">
+                            New Group
+                        </a>
                 </h3>
                 <p class="list-group-item-text">
                 <a href="{{ game.link }}">
