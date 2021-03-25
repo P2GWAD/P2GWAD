@@ -38,9 +38,8 @@ class UserProfileForm(forms.ModelForm):
 
 
 class GroupForm(forms.ModelForm):
-    name = forms.CharField(max_length=128, help_text="Please enter the name of the Chat.")
+    name = forms.CharField(max_length=128, help_text="Please enter the name of the Group.")
     game = forms.ModelChoiceField(queryset=Game.objects.all(), help_text='Game')
-
     class Meta:
         model = Group
         fields = ('name', 'game',)

@@ -1,4 +1,4 @@
-import datetime
+import random
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -20,26 +20,17 @@ def about(request):
     return render(request, 'P2G/about.html')
 
 
-def groups(request):
-    return render(request, 'P2G/groups.html')
-
-
 def highscores(request):
-    game_list = Game.objects
+    game_list = Game.objects.all()
     context_dict = {}
-    context_dict[games] = game_list
+    context_dict['games'] = game_list
     game_counter = 0
     for game in game_list:
         score_list = Score.objects.filter(game=game).order_by('-score')[:10]
         context_dict[game.name] = score_list
-	game_counter = game_counter + 1
+        game_counter = game_counter + 1
 
-    #return render(request, 'P2G/highscores.html')
     return render(request, 'P2G/highscores.html', context=context_dict)
-
-
-def playRandom(request):
-    return render(request, 'P2G/play_random.html')
 
 
 class CategoriesView(View):
@@ -102,7 +93,7 @@ class AddGameView(View):
 
         if form.is_valid():
             game = form.save(commit=True)
-            return redirect(reverse('P2G:show_category', kwargs={'category_id': game.category.id}))
+            return redirect(reverse('P2G:show_game', kwargs={'game_id': game.id}))
         else:
             print(form.errors)
 
@@ -114,6 +105,7 @@ class GameView(View):
     def get(self, request, game_id):
         game = Game.objects.get(id=game_id)
         context_dict = {'game': game}
+        context_dict['scores'] = Score.objects.filter(game=game).order_by('-score')[:5]
         return render(request, 'P2G/game.html', context_dict)
 
 
@@ -345,7 +337,7 @@ class NewGroupView(View):
         context_dict ={}
         if int(game_id) != -1:
             game = Game.objects.get(id=int(game_id))
-            form = GroupForm(initial={'game':game})
+            form = GroupForm(initial={'game': game})
         else:
             form = GroupForm()
         context_dict['form'] = form
@@ -364,7 +356,8 @@ class NewGroupView(View):
                 user = User.objects.get(id=int(u_id))
                 user_profile = UserProfile.objects.get(user=user)
                 form.instance.users.add(user_profile)
-            return redirect(reverse('P2G:index'))
+            return redirect(reverse('P2G:group',
+                                kwargs={'group_id': form.instance.id, 'user_id': user_id}))
         else:
             print(form.errors)
         return redirect(reverse('P2G:new_group',
@@ -432,3 +425,27 @@ class RemoveScoreView(View):
         Score.objects.filter(id=score_id).delete()
         approvals = Score.objects.filter(approved=False).order_by('date').exclude(user=user_id)
         return render(request, 'P2G/approval_table.html', {'approvals': approvals})
+
+
+class PlayRandomView(View):
+    def get(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
+        group = Group.objects.filter(randGroup=True)
+
+        if len(group) == 0:
+            games = Game.objects.all()
+            index = random.randint(0,len(games)-1)
+            game = games[index]
+            name = 'Random Group Playing ' + game.name
+            group = Group.objects.create(game=game, name=name, randGroup=True)
+        else:
+            group = group[0]
+        group.users.add(user_profile)
+
+        if group.users.count() >= 4:
+            group.randGroup = False
+            group.save()
+
+        return redirect(reverse('P2G:group',
+                                kwargs={'group_id': group.id, 'user_id': user_id}))

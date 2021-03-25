@@ -16,18 +16,22 @@
     </div>
 
     {% if categories %}
-        <ul>
+        <div class="list-group">
             {% for category in categories %}
-                <li><a href="{% url 'P2G:show_category' category.id %}"> {{ category.name }} </a>
-                    {% if page.views != 1 %}
+                <div class="list-group-item">
+                    <h4>
+                        <a href="{% url 'P2G:show_category' category.id %}"> {{ category.name }} </a>
+                    </h4>
+                    {% if category.likes != 1 %}
                         ({{ category.likes }} Likes)
-                    {% elif page.views > 1 %}
+                    {% elif category.likes > 1 %}
                         ({{ category.likes }} Like)
                     {% endif %}
-                    ({{ category.description }}
-                </li>
+                    <br>
+                    ({{ category.description }})
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         There are currently no Categories
     {%  endif %}
