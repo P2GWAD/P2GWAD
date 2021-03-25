@@ -17,7 +17,7 @@
            class="form-control ds-input"
            placeholder="Search Friends..."
            data-user-id="{{ user.id }}"/>
-
+	</br></br></br>
     <div id="friend-list">
         <div class="container">
             <div class="row">
@@ -43,13 +43,16 @@
                                                data-user-id="{{ user.id }}">
                                     </h4>
                                 </div>
+								</br></br>
                             {% endfor %}
                         </div>
                     </div>
                 {% else %}
                     <p>You haven't added any friends yet. Search for Players and add them to your friend list.</p>
+					</br></br>
                 {% endif %}
             </div>
+			<button type="button"><a href="{% url 'P2G:otherPlayers' user.username%}" style= "color:black">Search Players</button>
         </div>
     </div>
 {% endblock %}
