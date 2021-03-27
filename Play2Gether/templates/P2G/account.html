@@ -14,12 +14,14 @@
 
     <div class="container">
         <div class="row">
-            <img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
-                 width="300"
-                 height="300"
-                 alt="{{ selected_user.username }}'s profile image"/>
-            <br/>
-            <div>
+			<div class ="col">
+				<img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
+					 width="300"
+					 height="300"
+					 alt="{{ selected_user.username }}'s profile image"/>
+				<br/>
+			</div>
+            <div class="col">
                 {% if selected_user == user %}
                     <form method="post" action="." enctype="multipart/form-data">
                     {% csrf_token %}
@@ -33,9 +35,13 @@
                     </p>
                 {% endif %}
             </div>
-            <form action="{% url 'auth_password_change' %}">
-                <button type="submit">Change Password</button>
-            </form>
+			<div class ="col">
+				<form action="{% url 'auth_password_change' %}">
+					<button type="submit">Change Password</button>
+				</form>
+				</br></br>
+				<button type="button"><a href="{% url 'P2G:friends' user.username%}" style= "color:black">Your friends</button>
+			</div>
         </div>
     </div>
 {% endblock %}

@@ -1,20 +1,22 @@
 {% extends 'P2G/base.html' %}
+{% load staticfiles %}
 
 {% block title_block %}
     About
 {% endblock %}
 
 {% block body_block %}
-<h1>Join Play2Gether today and game with your
-    friends all around the world!</h1>
-
-<div>
-
-P2G lets you play with friends, new and old.
-
-    <ul>
-        <li><a href="/django/base/">Back to the home page.</a></li>
-    </ul>
-
+<div class="container-fluid col-md-12 col-lg-12">
+	<div class="row">
+		<div class= "col-md-2 col-lg-2">
+				<img src="{% static 'images/logo.png' %}" alt="logo of the app" height="300">
+		</div>
+		<div class= "col-md-10 col-lg-10">
+			<h1>About Play2gether</h1>
+			<p style="font-size: 130%">
+			Play2gether is here to help connect people with similar hobbies and interests from around the world. Especially during these difficult times when many countries went into lockdown people found themselves alone and unable to activities, they enjoy that require bigger number of people. Many of us have not made a new friend in months and when it comes to people we knew before quarantine, there are not many activities we could do together. Now this is about to change. We have created a platform where anyone can meet new people and spend some quality time with their friends. Play2gether can be used as a pool of ideas for activities in form of simple group online games that everyone can play. Since these will be played in groups, the app also covers the socializing aspect. It allows users to play with their group of friends or even create a new group if they feel like meeting new people. Furthermore, for the competitive types, there is a leaderboard for each game to reward the best players among you. And the best thing is that even you can contribute to the app growth by adding new games you believe are missing. Help us turn this app into the perfect place for all the games fans out there!
+			</p>
+		</div>
+	</div>
 </div>
 {% endblock %}
