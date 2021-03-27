@@ -38,7 +38,7 @@ class Group(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     name = models.CharField(max_length=64, null=False)
     randGroup = models.BooleanField(default=False)
-    users = models.ManyToManyField(UserProfile)
+    users = models.ManyToManyField(User)
 
     def __str__(self):
         return self.name

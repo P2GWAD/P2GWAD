@@ -12,8 +12,18 @@ from P2G.models import Category, Game, User, UserProfile, Group, Message, Score
 from P2G.forms import CategoryForm, GameForm, UserProfileForm, GroupForm
 
 
+# place cookies to allow users that are not logged in to play random
 def index(request):
-    return render(request, 'P2G/index.html')
+    response = render(request, 'P2G/index.html')
+    if not request.user.is_authenticated:
+        guest_id = request.COOKIES.get('guest_id', 'No ID')
+        if guest_id == 'No ID':
+            guest_user = User.objects.create(username='GUEST')
+            name = 'GuestUser_' + str(guest_user.id)
+            guest_user.username = name
+            guest_user.save()
+            response.set_cookie('guest_id', guest_user.id)
+    return response
 
 
 def about(request):
@@ -253,6 +263,7 @@ class SearchFriendsView(View):
 
 
 class SearchOthersView(View):
+    @method_decorator(login_required)
     def get(self, request):
         user_id = int(request.GET['user_id'])
         user = User.objects.get(id=user_id)
@@ -274,7 +285,6 @@ class SearchOthersView(View):
 
 
 class GroupView(View):
-    @method_decorator(login_required)
     def get(self, request, group_id, user_id):
         group = Group.objects.get(id=int(group_id))
         context_dict = {}
@@ -282,7 +292,7 @@ class GroupView(View):
         context_dict['user_id'] = int(user_id)
         context_dict['users'] = []
         for user in group.users.all():
-            context_dict['users'].append(user.user)
+            context_dict['users'].append(user)
         context_dict['name'] = group.name
         context_dict['game'] = group.game
         context_dict['messages'] = Message.objects.filter(group=group).order_by('date')
@@ -292,7 +302,6 @@ class GroupView(View):
 
 
 class GroupAddMessageView(View):
-    @method_decorator(login_required)
     def get(self, request):
         group_id = request.GET['group_id']
         group = Group.objects.get(id=group_id)
@@ -305,7 +314,6 @@ class GroupAddMessageView(View):
 
 
 class GroupUpdateView(View):
-    @method_decorator(login_required)
     def get(self, request):
         group_id = int(request.GET['group_id'])
         group = Group.objects.get(id=group_id)
@@ -314,7 +322,6 @@ class GroupUpdateView(View):
 
 
 class MessageCheckView(View):
-    @method_decorator(login_required)
     def get(self, request):
         latest_client = int(request.GET['latest_message_id'])
         group_id = int(request.GET['group_id'])
@@ -352,8 +359,7 @@ class NewGroupView(View):
             form.save(commit=True)
             for u_id in user_ids:
                 user = User.objects.get(id=int(u_id))
-                user_profile = UserProfile.objects.get(user=user)
-                form.instance.users.add(user_profile)
+                form.instance.users.add(user)
             return redirect(reverse('P2G:group',
                                 kwargs={'group_id': form.instance.id, 'user_id': user_id}))
         else:
@@ -366,8 +372,7 @@ class GroupsView(View):
     @method_decorator(login_required)
     def get(self, request, user_id):
         user = User.objects.get(id=int(user_id))
-        user_profile = UserProfile.objects.get(user=user)
-        groups = user_profile.group_set.all()
+        groups = user.group_set.all()
 
         group_collection = []
         for group in groups:
@@ -376,8 +381,8 @@ class GroupsView(View):
             dict['name'] = group.name
             users = []
             for u in group.users.all():
-                if u.user.id != int(user_id):
-                    users.append(u.user.username)
+                if u.id != int(user_id):
+                    users.append(u.username)
             dict['users'] = users
             group_collection.append(dict)
 
@@ -385,7 +390,6 @@ class GroupsView(View):
 
 
 class AddScoreView(View):
-    @method_decorator(login_required)
     def get(self, request):
         group_id = int(request.GET['group_id'])
         group = Group.objects.get(id=group_id)
@@ -403,7 +407,6 @@ class AddScoreView(View):
 
 
 class ApproveScoreView(View):
-    @method_decorator(login_required)
     def get(self, request):
         user_id = int(request.GET['user_id'])
         if int(request.GET['score_id']) != -1:
@@ -416,7 +419,6 @@ class ApproveScoreView(View):
 
 
 class RemoveScoreView(View):
-    @method_decorator(login_required)
     def get(self, request):
         score_id = int(request.GET['score_id'])
         user_id = int(request.GET['user_id'])
@@ -426,9 +428,15 @@ class RemoveScoreView(View):
 
 
 class PlayRandomView(View):
-    def get(self, request, user_id):
+    def get(self, request):
+        if request.user.is_authenticated:
+            user_id = request.user.id
+        else:
+            user_id = request.COOKIES.get('guest_id', 'No ID')
+        if user_id == 'No ID':
+            redirect(reverse('P2G:index'))
+
         user = User.objects.get(id=user_id)
-        user_profile = UserProfile.objects.get(user=user)
         group = Group.objects.filter(randGroup=True)
 
         if len(group) == 0:
@@ -439,7 +447,7 @@ class PlayRandomView(View):
             group = Group.objects.create(game=game, name=name, randGroup=True)
         else:
             group = group[0]
-        group.users.add(user_profile)
+        group.users.add(user)
 
         if group.users.count() >= 4:
             group.randGroup = False
