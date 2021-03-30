@@ -15,10 +15,17 @@
     <div class="container">
         <div class="row">
 			<div class ="col">
-				<img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
-					 width="300"
-					 height="300"
-					 alt="{{ selected_user.username }}'s profile image"/>
+                {% if user_profile.profile_image %}
+                    <img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
+                         width="300"
+                         height="300"
+                         alt="Not Found">
+                {% else %}
+                    <img src="{% static 'images/AltUserPicture.png' %}"
+                         width="300"
+                         height="300"
+                         alt="Not Found">
+                {% endif %}
 				<br/>
 			</div>
             <div class="col">
@@ -30,18 +37,19 @@
                     </form>
                 {% else %}
                     <p>
-                        <strong>Website:</strong>
-                        <a href="{{ user_profile.website }}">{{ user_profile.website }}</a>
+                        <strong>Bio:</strong>
+                        {{ user_profile.bio }}
                     </p>
                 {% endif %}
             </div>
 			<div class ="col">
+                {% if selected_user == user %}
 				<form action="{% url 'auth_password_change' %}">
-					<button type="submit">Change Password</button>
+					<button type="submit" class="btn btn-primary" style = "background-color: #046B33">Change Password</button>
 				</form>
 				</br></br>
-				<button type="button"><a href="{% url 'P2G:friends' user.username%}" style= "color:black">Your friends</button>
-			</div>
+				<button type="button" class="btn btn-primary" style = "background-color: #046B33"><a href="{% url 'P2G:friends' user.username%}" style= "color:white">Your friends</button>
+          </div>
         </div>
     </div>
 {% endblock %}

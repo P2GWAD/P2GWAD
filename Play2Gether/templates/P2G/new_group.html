@@ -26,7 +26,7 @@
 
                 <input id="current-members-ids" type="hidden" name="users" value="{{ user_id }}"/>
 
-                <button class="btn btn-primary" type="submit" name="submit">
+                <button class="btn btn-primary" type="submit" name="submit" style = "background-color: #046B33">
                     Create Group
                 </button>
             </form>
@@ -42,15 +42,22 @@
                             {% if list_user.user.id != user_id %}
                             <div class="list-group-item">
                                 <h4 class="list-group-item-heading">
-                                    <img src="{{ MEDIA_URL }}{{ list_user.profile_imageile }}"
-                                         width="64"
-                                         height="64"
-                                         alt="Missing Picture"/>
+                                    {% if user_profile.profile_image %}
+                                        <img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
+                                             width="64"
+                                             height="64"
+                                             alt="Not Found">
+                                    {% else %}
+                                        <img src="{% static 'images/AltUserPicture.png' %}"
+                                             width="64"
+                                             height="64"
+                                             alt="Not Found">
+                                    {% endif %}
                                     {{ list_user.user.username }}
                                     <input class="btn btn-primary P2G-add-user"
                                            type="button"
                                            value="Add"
-                                           style="float: right; margin: 10px;"
+                                           style="float: right; margin: 10px; background-color:#046B33"
                                            data-user-id="{{ list_user.user.id }}"
                                            data-username="{{ list_user.user.username }}">
                                 </h4>

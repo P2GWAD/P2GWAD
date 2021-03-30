@@ -58,7 +58,7 @@ $(document).ready(function() {
             end = new Date().getTime();
         }
         $.get('/P2G/approve_score/',
-            {'score_id': -1, 'user_id': user_id},
+            {'score_id': -1, 'user_id': user_id, 'group_id':group_id},
             function (data) {
                 $('#approvals').html(data);
         });
@@ -70,7 +70,7 @@ $(document).ready(function() {
         var user_id = document.getElementById('data-user-id').value;
         var score_id = $(this).attr('data-score-id');
         $.get('/P2G/approve_score/',
-            {'score_id':score_id, 'user_id':user_id},
+            {'score_id':score_id, 'user_id':user_id, 'group_id':group_id},
             function (data) {
                 $('#approvals').html(data);
         });
@@ -86,7 +86,7 @@ $(document).ready(function() {
         var user_id = document.getElementById('data-user-id').value;
         var score_id = $(this).attr('data-score-id');
         $.get('/P2G/remove_score/',
-            {'score_id':score_id, 'user_id':user_id},
+            {'score_id':score_id, 'user_id':user_id, 'group_id':group_id},
             function (data) {
                 $('#approvals').html(data);
         });
@@ -114,5 +114,5 @@ $(document).ready(function() {
                     latest_message_id = data;
                 }
             })
-    }, 5000);
+    }, 1000);
 });

@@ -4,6 +4,7 @@
 <html lang="en">
     <head>
     <meta charset="utf-8">
+    <link rel="icon" href="{% static 'images/favicon.png' %}">
     <title>
         P2G - {% block title_block %}Play & Connect{% endblock %}
     </title>
@@ -27,16 +28,15 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:index' %}">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:about' %}">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>						
+						<li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
 					</ul>
 					<ul class="navbar-nav ml-auto">
                         {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:account' user.username%}">Account</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' user.username%}">Search Players</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:groups' user.id %}">Groups</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:new_group' user.id -1%}">New Group</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:friends' user.username%}">Friends</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:otherPlayers' user.username%}">Search Players</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:games' %}">Games</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'P2G:categories' %}">Categories</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'P2G:highscores' %}">High Scores</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'auth_logout' %}?next=/P2G/">Logout</a></li>
                         {% else %}
@@ -56,7 +56,8 @@
                         <input type="search"
                                id="search-input"
                                class="form-control ds-input"
-                               placeholder="Search..." />
+                               placeholder="Search For Games..."
+							   data-game-id="{{ game.id }}" />
                     </div>
 
                     <div class="sidebar-sticky">
@@ -112,12 +113,12 @@
 
                     {% block body_block %}{% endblock %}
 					
-					</br></br></br>
+					</br></br></br></br></br></br>
 					
                     <!-- FOOTER -->
-                    <footer>
-                        <p class="float-right"><a href="#">Back to top</a></p>
-                        <p>&copy; 2020 Tango With Django 2 &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+                    <footer class="fixed-bottom" style="position:fixed; padding:15px;">
+                        <p class="float-right"><a href="#" style="color:#046B33">Back to top</a></p>
+                        <p>&copy; 2020 Tango With Django 2 &middot; <a href="#" style="color:#046B33">Privacy</a> &middot; <a href="#" style="color:#046B33">Terms</a></p>
                     </footer>
                 </main>
             </div>
