@@ -9,9 +9,11 @@
     <div class="jumbotron p-4">
         <div class="container">
             <h1> Categories </h1>
+			{% if user.is_authenticated %}
             <form action="{% url 'P2G:add_category' %}">
-                <button type="submit">Add Category</button>
+                <button type="submit" class="btn btn-primary" style = "background-color: #046B33">Add Category</button>
             </form>
+			{% endif %}
         </div>
     </div>
 
@@ -20,7 +22,7 @@
             {% for category in categories %}
                 <div class="list-group-item">
                     <h4>
-                        <a href="{% url 'P2G:show_category' category.id %}"> {{ category.name }} </a>
+                        <a href="{% url 'P2G:show_category' category.id %}" style="color: black"> {{ category.name }} </a>
                     </h4>
                     {% if category.likes != 1 %}
                         ({{ category.likes }} Likes)
