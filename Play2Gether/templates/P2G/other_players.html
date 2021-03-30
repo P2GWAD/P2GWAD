@@ -39,7 +39,7 @@
                                                      height="64"
                                                      alt="Not Found">
                                             {% endif %}
-                                            <a href="{% url 'P2G:account' list_user.user.username %}">
+                                            <a href="{% url 'P2G:account' list_user.user.username %}" style="color:#046B33">
                                                 {{ list_user.user.username }}
                                             </a>
                                         {% if list_user in friends %}
@@ -51,7 +51,7 @@
                                         <input class="btn btn-primary P2G-add-friend"
                                                type="button"
                                                value="Add to Friends"
-                                               style="float: right; margin: 10px;"
+                                               style="float: right; margin: 10px; background-color:#046B33;"
                                                data-friend-id="{{ list_user.user.id }}"
                                                data-user-id="{{ user.id }}">
                                         {% endif %}
