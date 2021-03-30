@@ -201,8 +201,8 @@ class ProfileView(View):
 class ListOtherPlayersView(View):
     @method_decorator(login_required)
     def get(self, request, username):
-        profiles = UserProfile.objects.all().order_by('user__username')
         user = User.objects.get(username=username)
+        profiles = UserProfile.objects.all().order_by('user__username').exclude(user=user)
         user_profile = UserProfile.objects.get(user=user)
         friends = user_profile.friends.all()
         return render(request, 'P2G/other_players.html', {'user_profile_list': profiles, 'friends': friends})
