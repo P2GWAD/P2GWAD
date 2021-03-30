@@ -2,6 +2,7 @@ import random
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -30,56 +31,34 @@ def about(request):
     return render(request, 'P2G/about.html')
 
 
-#def highscores(request):
-    #game_list = Game.objects.all()
-    #for game in game_list:
-        #print(game)
-    #context_dict = {}
-    #context_dict['games'] = game_list
-    #game_counter = 0
-    #rank_counter = 0
-    #context_dict['rank_counter'] = rank_counter
-    #for game in game_list:
-        #score_list = Score.objects.filter(game=game).order_by('-score')[:10]
-        #context_dict[game.name] = score_list
-        #game_counter = game_counter + 1
-    #print(context_dict)
-    #return render(request, 'P2G/highscores.html', context=context_dict)
-
-class HighscoresView(View): 
-    register = template.Library()  
-    @register.simple_tag
-    def get_keys(dictionary):
-        return dictionary.keys()
-
-    @register.simple_tag
-    def get_values(dictionary):
-        return dictionary.values()
-
-#    @method_decorator(login_required)
- #   def get(self, request):
-  #      game_list = Game.objects.all().order_by('-likes')
-   #     context_dict = {}
-    #    context_dict['games'] = game_list
-     #   game_counter = 0
-      #  for game in game_list:
-       #     int_score_list = Score.objects.filter(game=game).order_by('-score')[:10]
-        #    str_score_list = []
-         #   for i in range(len(int_score_list)):
-          #      str_score_list.append(str(int_score_list[i]))
-           # context_dict[game.name] = str_score_list
-            #game_counter = game_counter + 1
-       # return render(request, 'P2G/highscores.html', context=context_dict)
+class HighscoresView(View):
+    #https://www.edureka.co/community/79813/how-look-dictionary-value-with-variable-in-django-template
+    @register.filter
+    def get_item(dictionary, key):
+        return dictionary.get(key)
 
     @method_decorator(login_required)
     def get(self, request):
-        game_names = Game.objects.all().order_by('-likes')
-        context_dict = {}
-        games = []
-        for game_name in game_names:
-            score_list = Score.objects.filter(game=game_name).order_by('-score')[:10]
-            games.append({game_name:score_list})
-        return render(request, 'P2G/highscores.html', {'games':games})
+        scores = {}
+        games = Game.objects.all().order_by('-likes')
+        for game in games:
+            scores[game.name] = Score.objects.filter(game=game).order_by('-score')[:5]
+
+        return render(request, 'P2G/highscores.html', {'games':games, 'scores':scores})
+
+
+class GameHighscoresView(View):
+    @register.filter
+    def get_image(query_set, user):
+        profile = query_set.get(user=user)
+        return profile.profile_image
+
+    @method_decorator(login_required)
+    def get(self, request, game_id):
+        game = Game.objects.get(id=game_id)
+        scores = Score.objects.filter(game=game).order_by('-score')
+        profiles = UserProfile.objects.all()
+        return render(request, 'P2G/game_highscores.html', {'profiles':profiles, 'game': game, 'scores': scores})
 
 
 class CategoriesView(View):
