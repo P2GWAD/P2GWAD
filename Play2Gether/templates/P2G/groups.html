@@ -9,6 +9,9 @@
     <div class="jumbotron p-4">
         <div class="container">
             <h1> Groups </h1>
+            <form action="{% url 'P2G:new_group' user.id -1%}">
+                <button type="submit">Create New Group</button>
+            </form>
         </div>
     </div>
 

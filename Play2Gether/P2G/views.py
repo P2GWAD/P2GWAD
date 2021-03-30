@@ -12,8 +12,18 @@ from P2G.models import Category, Game, User, UserProfile, Group, Message, Score
 from P2G.forms import CategoryForm, GameForm, UserProfileForm, GroupForm
 
 
+# place cookies to allow users that are not logged in to play random
 def index(request):
-    return render(request, 'P2G/index.html')
+    response = render(request, 'P2G/index.html')
+    if not request.user.is_authenticated:
+        guest_id = request.COOKIES.get('guest_id', 'No ID')
+        if guest_id == 'No ID':
+            guest_user = User.objects.create(username='GUEST')
+            name = 'GuestUser_' + str(guest_user.id)
+            guest_user.username = name
+            guest_user.save()
+            response.set_cookie('guest_id', guest_user.id)
+    return response
 
 
 def about(request):
@@ -32,14 +42,16 @@ def highscores(request):
 
     return render(request, 'P2G/highscores.html', context=context_dict)
 
+
 class CategoriesView(View):
     def get(self, request):
-        category_list = Category.objects.all().order_by('-likes')
+        category_list = Category.objects.all().order_by('name')
         return render(request, 'P2G/categories.html', {'categories': category_list})
+
 
 class GamesView(View):
     def get(self, request):
-        games_list = Game.objects.all().order_by('-likes')
+        games_list = Game.objects.all().order_by('name')
         return render(request, 'P2G/games.html', {'games': games_list})
 
 
@@ -110,14 +122,15 @@ class GameView(View):
 class GameSuggestionView(View):
     def get(self, request):
         if 'suggestion' in request.GET:
-            suggestion = request.GET['suggestion']
+            suggestion = request.GET['suggestion'].lower()
         else:
             suggestion = ''
 
-        games_query = Game.objects.all()
+        games_query = Game.objects.all().order_by('name')
         games = []
         for game in games_query:
-            if game.name.startswith(suggestion):
+            name = game.name.lower()
+            if name.startswith(suggestion):
                 games.append(game)
 
         return render(request, 'P2G/game-suggestion.html', {'games': games})
@@ -125,7 +138,7 @@ class GameSuggestionView(View):
 
 def register_profile(request):
     form = UserProfileForm()
-
+    print('Hello')
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
 
@@ -188,7 +201,7 @@ class ProfileView(View):
 class ListOtherPlayersView(View):
     @method_decorator(login_required)
     def get(self, request, username):
-        profiles = UserProfile.objects.all()
+        profiles = UserProfile.objects.all().order_by('user__username')
         user = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user)
         friends = user_profile.friends.all()
@@ -213,7 +226,7 @@ class FriendsView(View):
     def get(self, request, username):
         user = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user)
-        friends = user_profile.friends.all()
+        friends = user_profile.friends.all().order_by('user__username')
         return render(request, 'P2G/friends.html', {'friends': friends})
 
 
@@ -227,7 +240,7 @@ class RemoveFriendView(View):
         friend = User.objects.get(id=friend_id)
         friend_profile = UserProfile.objects.get(user=friend)
         user_profile.friends.remove(friend_profile)
-        friends = user_profile.friends.all()
+        friends = user_profile.friends.all().order_by('user__username')
         return render(request, 'P2G/friend_list.html', {'friends': friends})
 
 
@@ -239,20 +252,22 @@ class SearchFriendsView(View):
         user_profile = UserProfile.objects.get(user=user)
 
         if 'suggestion' in request.GET:
-            suggestion = request.GET['suggestion']
+            suggestion = request.GET['suggestion'].lower()
         else:
             suggestion = ''
 
-        friends_query = user_profile.friends.all()
+        friends_query = user_profile.friends.all().order_by('user__username')
         friends = []
         for friend in friends_query:
-            if friend.user.username.startswith(suggestion):
+            username = friend.user.username.lower()
+            if username.startswith(suggestion):
                 friends.append(friend)
 
         return render(request, 'P2G/friend_list.html', {'friends': friends})
 
 
 class SearchOthersView(View):
+    @method_decorator(login_required)
     def get(self, request):
         user_id = int(request.GET['user_id'])
         user = User.objects.get(id=user_id)
@@ -260,21 +275,21 @@ class SearchOthersView(View):
         friends = user_profile.friends.all()
 
         if 'suggestion' in request.GET:
-            suggestion = request.GET['suggestion']
+            suggestion = request.GET['suggestion'].lower()
         else:
             suggestion = ''
 
-        user_profiles = UserProfile.objects.all()
+        user_profiles = UserProfile.objects.all().order_by('user__username')
         user_profile_list = []
         for user_profile in user_profiles:
-            if user_profile.user.username.startswith(suggestion):
+            username = user_profile.user.username.lower()
+            if username.startswith(suggestion):
                 user_profile_list.append(user_profile)
 
         return render(request, 'P2G/others_list.html', {'user_profile_list': user_profile_list, 'friends': friends})
 
 
 class GroupView(View):
-    @method_decorator(login_required)
     def get(self, request, group_id, user_id):
         group = Group.objects.get(id=int(group_id))
         context_dict = {}
@@ -282,17 +297,16 @@ class GroupView(View):
         context_dict['user_id'] = int(user_id)
         context_dict['users'] = []
         for user in group.users.all():
-            context_dict['users'].append(user.user)
+            context_dict['users'].append(user)
         context_dict['name'] = group.name
         context_dict['game'] = group.game
         context_dict['messages'] = Message.objects.filter(group=group).order_by('date')
         context_dict['scores'] = Score.objects.filter(group=group).order_by('-score')[:5]
-        context_dict['approvals'] = Score.objects.filter(approved=False).exclude(user=user_id)
+        context_dict['approvals'] = Score.objects.filter(approved=False).filter(group=group).exclude(user=user_id)
         return render(request, 'P2G/group.html', context=context_dict)
 
 
 class GroupAddMessageView(View):
-    @method_decorator(login_required)
     def get(self, request):
         group_id = request.GET['group_id']
         group = Group.objects.get(id=group_id)
@@ -305,7 +319,6 @@ class GroupAddMessageView(View):
 
 
 class GroupUpdateView(View):
-    @method_decorator(login_required)
     def get(self, request):
         group_id = int(request.GET['group_id'])
         group = Group.objects.get(id=group_id)
@@ -314,17 +327,15 @@ class GroupUpdateView(View):
 
 
 class MessageCheckView(View):
-    @method_decorator(login_required)
     def get(self, request):
         latest_client = int(request.GET['latest_message_id'])
         group_id = int(request.GET['group_id'])
         group = Group.objects.get(id=group_id)
-        latest_server = Message.objects.filter(group=group).order_by('-date')[0].id
-
-        if latest_client == latest_server:
+        latest_server = Message.objects.filter(group=group).order_by('-date')
+        if len(latest_server) == 0 or latest_client == latest_server[0].id:
             out = False
         else:
-            out = latest_server
+            out = latest_server[0].id
         return HttpResponse(out)
 
 
@@ -340,7 +351,7 @@ class NewGroupView(View):
             form = GroupForm()
         context_dict['form'] = form
         context_dict['user_id'] = int(user_id)
-        context_dict['user_profile_list'] = UserProfile.objects.all()
+        context_dict['user_profile_list'] = UserProfile.objects.all().order_by('user__username')
         return render(request, 'P2G/new_group.html', context_dict)
 
     @method_decorator(login_required)
@@ -352,8 +363,7 @@ class NewGroupView(View):
             form.save(commit=True)
             for u_id in user_ids:
                 user = User.objects.get(id=int(u_id))
-                user_profile = UserProfile.objects.get(user=user)
-                form.instance.users.add(user_profile)
+                form.instance.users.add(user)
             return redirect(reverse('P2G:group',
                                 kwargs={'group_id': form.instance.id, 'user_id': user_id}))
         else:
@@ -366,8 +376,7 @@ class GroupsView(View):
     @method_decorator(login_required)
     def get(self, request, user_id):
         user = User.objects.get(id=int(user_id))
-        user_profile = UserProfile.objects.get(user=user)
-        groups = user_profile.group_set.all()
+        groups = user.group_set.all()
 
         group_collection = []
         for group in groups:
@@ -376,8 +385,8 @@ class GroupsView(View):
             dict['name'] = group.name
             users = []
             for u in group.users.all():
-                if u.user.id != int(user_id):
-                    users.append(u.user.username)
+                if u.id != int(user_id):
+                    users.append(u.username)
             dict['users'] = users
             group_collection.append(dict)
 
@@ -385,7 +394,6 @@ class GroupsView(View):
 
 
 class AddScoreView(View):
-    @method_decorator(login_required)
     def get(self, request):
         group_id = int(request.GET['group_id'])
         group = Group.objects.get(id=group_id)
@@ -403,32 +411,41 @@ class AddScoreView(View):
 
 
 class ApproveScoreView(View):
-    @method_decorator(login_required)
     def get(self, request):
         user_id = int(request.GET['user_id'])
+        group_id = int(request.GET['user_id'])
+        group = Group.objects.get(id=group_id)
         if int(request.GET['score_id']) != -1:
             score_id = int(request.GET['score_id'])
             score = Score.objects.get(id=score_id)
             score.approved = True
             score.save()
-        approvals = Score.objects.filter(approved=False).order_by('date').exclude(user=user_id)
+        approvals = Score.objects.filter(approved=False).filter(group=group).order_by('date').exclude(user=user_id)
         return render(request, 'P2G/approval_table.html', {'approvals': approvals})
 
 
 class RemoveScoreView(View):
-    @method_decorator(login_required)
     def get(self, request):
         score_id = int(request.GET['score_id'])
         user_id = int(request.GET['user_id'])
+        group_id = int(request.GET['user_id'])
+        group = Group.objects.get(id=group_id)
         Score.objects.filter(id=score_id).delete()
-        approvals = Score.objects.filter(approved=False).order_by('date').exclude(user=user_id)
+        approvals = Score.objects.filter(approved=False).filter(group=group).order_by('date').exclude(user=user_id)
         return render(request, 'P2G/approval_table.html', {'approvals': approvals})
 
 
 class PlayRandomView(View):
-    def get(self, request, user_id):
+    def get(self, request):
+        if request.user.is_authenticated:
+            user_id = request.user.id
+        else:
+            user_id = request.COOKIES.get('guest_id', 'No ID')
+        if user_id == 'No ID':
+            error_message = 'It looks like sth. went wrong. Please ensure that you enable cookies, when playing as a Guest.'
+            return render(request, 'P2G/index.html', {'error_message': error_message})
+
         user = User.objects.get(id=user_id)
-        user_profile = UserProfile.objects.get(user=user)
         group = Group.objects.filter(randGroup=True)
 
         if len(group) == 0:
@@ -439,7 +456,7 @@ class PlayRandomView(View):
             group = Group.objects.create(game=game, name=name, randGroup=True)
         else:
             group = group[0]
-        group.users.add(user_profile)
+        group.users.add(user)
 
         if group.users.count() >= 4:
             group.randGroup = False
