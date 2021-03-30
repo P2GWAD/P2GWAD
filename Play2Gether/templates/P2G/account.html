@@ -37,10 +37,10 @@
             </div>
 			<div class ="col">
 				<form action="{% url 'auth_password_change' %}">
-					<button type="submit">Change Password</button>
+					<button type="submit" class="btn btn-primary" style = "background-color: #046B33">Change Password</button>
 				</form>
 				</br></br>
-				<button type="button"><a href="{% url 'P2G:friends' user.username%}" style= "color:black">Your friends</button>
+				<button type="button" class="btn btn-primary" style = "background-color: #046B33"><a href="{% url 'P2G:friends' user.username%}" style= "color:white">Your friends</button>
 			</div>
         </div>
     </div>
