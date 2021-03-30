@@ -7,10 +7,10 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import HttpResponse
+from django import template
 
 from P2G.models import Category, Game, User, UserProfile, Group, Message, Score
 from P2G.forms import CategoryForm, GameForm, UserProfileForm, GroupForm
-
 
 # place cookies to allow users that are not logged in to play random
 def index(request):
@@ -30,17 +30,56 @@ def about(request):
     return render(request, 'P2G/about.html')
 
 
-def highscores(request):
-    game_list = Game.objects.all()
-    context_dict = {}
-    context_dict['games'] = game_list
-    game_counter = 0
-    for game in game_list:
-        score_list = Score.objects.filter(game=game).order_by('-score')[:10]
-        context_dict[game.name] = score_list
-        game_counter = game_counter + 1
+#def highscores(request):
+    #game_list = Game.objects.all()
+    #for game in game_list:
+        #print(game)
+    #context_dict = {}
+    #context_dict['games'] = game_list
+    #game_counter = 0
+    #rank_counter = 0
+    #context_dict['rank_counter'] = rank_counter
+    #for game in game_list:
+        #score_list = Score.objects.filter(game=game).order_by('-score')[:10]
+        #context_dict[game.name] = score_list
+        #game_counter = game_counter + 1
+    #print(context_dict)
+    #return render(request, 'P2G/highscores.html', context=context_dict)
 
-    return render(request, 'P2G/highscores.html', context=context_dict)
+class HighscoresView(View): 
+    register = template.Library()  
+    @register.simple_tag
+    def get_keys(dictionary):
+        return dictionary.keys()
+
+    @register.simple_tag
+    def get_values(dictionary):
+        return dictionary.values()
+
+#    @method_decorator(login_required)
+ #   def get(self, request):
+  #      game_list = Game.objects.all().order_by('-likes')
+   #     context_dict = {}
+    #    context_dict['games'] = game_list
+     #   game_counter = 0
+      #  for game in game_list:
+       #     int_score_list = Score.objects.filter(game=game).order_by('-score')[:10]
+        #    str_score_list = []
+         #   for i in range(len(int_score_list)):
+          #      str_score_list.append(str(int_score_list[i]))
+           # context_dict[game.name] = str_score_list
+            #game_counter = game_counter + 1
+       # return render(request, 'P2G/highscores.html', context=context_dict)
+
+    @method_decorator(login_required)
+    def get(self, request):
+        game_names = Game.objects.all().order_by('-likes')
+        context_dict = {}
+        games = []
+        for game_name in game_names:
+            score_list = Score.objects.filter(game=game_name).order_by('-score')[:10]
+            games.append({game_name:score_list})
+        return render(request, 'P2G/highscores.html', {'games':games})
 
 class CategoriesView(View):
     def get(self, request):
