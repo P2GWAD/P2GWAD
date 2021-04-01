@@ -9,6 +9,7 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('games/', views.GamesView.as_view(), name='games'),
     path('highscores/', views.HighscoresView.as_view(), name='highscores'),
+    path('game_highscores/<game_id>', views.GameHighscoresView.as_view(), name='game_highscores'),
     path('other_players/<username>/', views.ListOtherPlayersView.as_view(), name='otherPlayers'),
     path('play_random/', views.PlayRandomView.as_view(), name='playRandom'),
     path('categories/', views.CategoriesView.as_view(), name='categories'),

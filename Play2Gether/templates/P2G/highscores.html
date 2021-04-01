@@ -1,45 +1,68 @@
 {% extends 'P2G/base.html' %}
 {% load staticfiles %}
-{% load extra_tags %}
 
 {% block title_block %}
     Highscores
 {% endblock %}
 
 {% block body_block %}
-	Highscores
-	<div style="overflow-x:auto;">
-		<style>
-		table, th, td {
-			border: 1px solid black;
-			border-collapse: collapse;
-		}
-		th, td {
-			padding: 15px;
-		</style>
-	        {% for game in games %}	
-		    <div>
-		    <table>
-			<table style="float: left">
-                        {% get_keys games as games_keys %}
-                        {% for game_name in games_keys %}
-			    <caption>Highscores for <li>{{ game_name }}</li></caption>
-                        {% endfor %}
-			<tr>
-				<th>User</th>
-				<th>Score</th>
-			</tr>
-                        {% get_values games as games_values %}
-		        {% for scores in games_values %}
-                            {% for score in scores %}
-			        <tr>
-                                    <td><li>{{ score.name }}</li></td>
-				    <td><li>{{ score.score }}</li></td>
-			        </tr>
-                            {% endfor %}
-		        {% endfor %}
-		    </table>
-		    </div>
-	        {% endfor %}
-	</div>
+	<div class="jumbotron p-4">
+        <div class="container">
+            <h1> Highscores </h1>
+        </div>
+    </div>
+
+{% for game in games %}
+        {% if forloop.first %}<div class="row">{% endif %}
+        <div class="col">
+            <h5>
+                <a href="{% url 'P2G:show_game' game.id %}" style = "color: black">
+                    {{ game.name }}
+                </a>
+                <a href="{% url 'P2G:game_highscores' game.id %}" class="btn btn-primary">
+                    See All
+                </a>
+            </h5>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" >Rank</th>
+                        <th scope="col" >User</th>
+                        <th scope="col" >Score</th>
+                        <th scope="col" style="text-align: center">Approved</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for score in scores|get_item:game.name%}
+                        {% if score.user.id == user.id %}
+                            <tr class="table-success">
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td> You </td>
+                                <td>{{ score.score }}</td>
+                                {% if score.approved %}
+                                    <td style="font-size: 20px; text-align: center">&#10004</td>
+                                {% else %}
+                                    <td style="font-size: 20px; text-align: center">&#10006</td>
+                                {% endif %}
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ score.user.username }}</td>
+                                <td>{{ score.score }}</td>
+                                {% if score.approved %}
+                                    <td style="font-size: 20px; text-align: center">&#10004</td>
+                                {% else %}
+                                    <td style="font-size: 20px; text-align: center">&#10006</td>
+                                {% endif %}
+                            </tr>
+                            {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if forloop.counter|divisibleby:2 %}</div> <br><div class="row">{% endif %}
+        {% if forloop.last %}</div>{% endif %}
+    {% endfor %}
+
 {% endblock %}
