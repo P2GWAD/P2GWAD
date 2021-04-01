@@ -9,7 +9,7 @@
                         <a href="{% url 'P2G:show_game' game.id %}">
                             {{ game.name }}
                         </a>
-                        <a href="{% url 'P2G:new_group' user.id game.id%}" class="btn btn-primary">
+                        <a href="{% url 'P2G:new_group' user.id game.id%}" class="btn" id="button">
                             New Group
                         </a>
                 </h3>

@@ -7,7 +7,7 @@
 
 {% block body_block %}
 	Highscores
-	<div style="overflow-x:auto;">
+	<div id="highscores">
 		<style>
 		table, th, td {
 			border: 1px solid black;
@@ -19,7 +19,7 @@
 	{% for game in games %}
 		<div>
 		<table>
-			<table style="float: left">
+			<table id="table">
 			<caption>Highscores for <li>{{ game }}</li></caption>
 			<tr>
 				<th>Rank</th>

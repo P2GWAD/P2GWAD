@@ -3,17 +3,22 @@
 
 <html lang="en">
     <head>
-    <meta charset="utf-8">
-    <link rel="icon" href="{% static 'images/favicon.png' %}">
-    <title>
-        P2G - {% block title_block %}Play & Connect{% endblock %}
-    </title>
+		<meta charset="utf-8">
+		<link rel="icon" href="{% static 'images/favicon.png' %}">
+		<title>
+			P2G - {% block title_block %}Play & Connect{% endblock %}
+		</title>
+		
+		
+		<!-- Bootstrap core CSS -->
+		 <link href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <!-- Bootstrap core CSS -->
-     <link href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-
-    <!-- Custom styles for this template -->
-    <link href="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.css" rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link href="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.css" rel="stylesheet">
+		
+		<!-- Our custom css file -->
+		<link href="{% static 'css/customstylesheet.css'%}" rel="stylesheet">
+		
     </head>
 
     <body>
@@ -52,13 +57,6 @@
             <div class="row">
                 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
 					</br></br></br>
-                    <div class="w-75 ml-3">
-                        <input type="search"
-                               id="search-input"
-                               class="form-control ds-input"
-                               placeholder="Search For Games..."
-							   data-game-id="{{ game.id }}" />
-                    </div>
 
                     <div class="sidebar-sticky">
                         <ul class="navbar-nav nav-justified mr-auto">
@@ -73,7 +71,7 @@
                             {% if categories %}
                                 <ul>
                                     {% for category in categories %}
-                                        <li class="nav-item" style ="list-style-type: none"><a href="{% url 'P2G:show_category' category.id %}" style= "color:black"><h5> {{ category.name }} </h5></a></li>
+                                        <li class="nav-item" id="list_item_menu"><a href="{% url 'P2G:show_category' category.id %}" id="black_link"><h5> {{ category.name }} </h5></a></li>
                                     {% endfor %}
                                 </ul>
                             {% else %}
@@ -90,7 +88,7 @@
                             {% if games %}
                                 <ul>
                                     {% for game in games %}
-                                        <li class="nav-item" style ="list-style-type: none"><a href="{% url 'P2G:show_game' game.id %}" style= "color:black"><h5>{{ game.name }}</h5></a></li>
+                                        <li class="nav-item" id="list_item_menu"><a href="{% url 'P2G:show_game' game.id %}" id="black_link"><h5>{{ game.name }}</h5></a></li>
                                     {% endfor %}
                                 </ul>
                             {% else %}
@@ -102,7 +100,7 @@
 
                 <main role="main" class="col-md-9  ml-sm-auto col-lg-10 px-4">
                     <!--- Welcome Section -->
-                    <div class="jumbotron p-4" style="background: #046B33">
+                    <div class="jumbotron p-4" id="logo_and_moto">
                         <div class="container">
                             <h1 class="jumbotron-heading text-white">Play2gether</h1>
                             <h4 class="text-white">Play Games and Meet Friends</h4>
@@ -116,9 +114,9 @@
 					</br></br></br></br></br></br>
 					
                     <!-- FOOTER -->
-                    <footer class="fixed-bottom" style="position:fixed; padding:15px;">
-                        <p class="float-right"><a href="#" style="color:#046B33">Back to top</a></p>
-                        <p>&copy; 2020 Tango With Django 2 &middot; <a href="#" style="color:#046B33">Privacy</a> &middot; <a href="#" style="color:#046B33">Terms</a></p>
+                    <footer class="fixed-bottom">
+                        <p class="float-right" id="green_link"><a href="#" id="green_link">Back to top</a></p>
+                        <p>&copy; 2021 Play2gether &middot; <a href="{% url 'P2G:about' %}" id="green_link">About</a></p>
                     </footer>
                 </main>
             </div>

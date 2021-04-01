@@ -45,10 +45,11 @@
 			<div class ="col">
                 {% if selected_user == user %}
 				<form action="{% url 'auth_password_change' %}">
-					<button type="submit" class="btn btn-primary" style = "background-color: #046B33">Change Password</button>
+					<button type="submit" class="btn" id="button">Change Password</button>
 				</form>
 				</br></br>
-				<button type="button" class="btn btn-primary" style = "background-color: #046B33"><a href="{% url 'P2G:friends' user.username%}" style= "color:white">Your friends</button>
+				<button type="button" class="btn" id="button"><a href="{% url 'P2G:friends' user.username%}" id="white_link">Your friends</button>
+				{%endif%}
           </div>
         </div>
     </div>

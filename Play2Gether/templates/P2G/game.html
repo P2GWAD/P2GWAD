@@ -21,14 +21,14 @@
             {% elif game.play_count > 1 %}
                 ({{ game.play_count }} Games played)
             {% endif %}
-            <br>
-            <a href="{{ game.link }}" class="btn btn-primary" target="_blank">
+            </br></br>
+            <a href="{{ game.link }}" class="btn" id="button" target="_blank">
                 Go to Game Webpage
             </a>
-            <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn btn-primary">
+            <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn" id="button">
                 New Group
             </a>
-            <br>
+            </br></br>
             {{ game.description }}
         </div>
         <div class="col">

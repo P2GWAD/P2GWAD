@@ -19,19 +19,18 @@
                                              height="64"
                                              alt="Not Found">
                                     {% endif %}
-                                    <a href="{% url 'P2G:account' list_user.user.username %}">
+                                    <a href="{% url 'P2G:account' list_user.user.username %}" id="black_link">
                                         {{ list_user.user.username }}
                                     </a>
                                 {% if list_user in friends %}
                                     <input class="btn"
                                        type="button"
-                                       value="Your Friend"
-                                       style="float: right; margin: 10px;">
+                                       value="Your Friend">
                                 {% else %}
-                                <input class="btn btn-primary P2G-add-friend"
+                                <input class="btn P2G-add-friend"
                                        type="button"
                                        value="Add to Friends"
-                                       style="float: right; margin: 10px;"
+                                       id = "button"
                                        data-friend-id="{{ list_user.user.id }}"
                                        data-user-id="{{ user.id }}">
                                 {% endif %}

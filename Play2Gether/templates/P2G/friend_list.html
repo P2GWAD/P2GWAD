@@ -18,13 +18,13 @@
                                          height="64"
                                          alt="Not Found">
                                 {% endif %}
-                                <a href="{% url 'P2G:account' friend.user.username %}">
+                                <a href="{% url 'P2G:account' friend.user.username %}" id="black_link">
                                     {{ friend.user.username }}
                                 </a>
                                 <input class="btn P2G-remove-friend"
                                        type="button"
                                        value="Remove"
-                                       style="float: right; margin: 10px;"
+                                       id="remove_button"
                                        data-friend-id="{{ friend.user.id }}"
                                        data-friend-name="{{ friend.user.username }}"
                                        data-user-id="{{ user.id }}">
