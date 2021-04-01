@@ -7,8 +7,8 @@
                     {% for friend in friends %}
                         <div class="list-group-item">
                             <h4 class="list-group-item-heading">
-                                {% if user_profile.profile_image %}
-                                    <img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
+                                {% if friend.profile_image %}
+                                    <img src="{{ MEDIA_URL }}{{ friend.profile_image }}"
                                          width="64"
                                          height="64"
                                          alt="Not Found">

@@ -156,7 +156,6 @@ class GameSuggestionView(View):
 
 def register_profile(request):
     form = UserProfileForm()
-    print('Hello')
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
 
