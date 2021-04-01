@@ -43,7 +43,7 @@
                 {% endif %}
             </div>
 			<div class ="col">
-                {% if selected_user == user %}
+        {% if selected_user == user %}
 				<form action="{% url 'auth_password_change' %}">
 					<button type="submit" class="btn" id="button">Change Password</button>
 				</form>

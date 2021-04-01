@@ -2,15 +2,16 @@ import random
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import HttpResponse
+from django import template
 
 from P2G.models import Category, Game, User, UserProfile, Group, Message, Score
 from P2G.forms import CategoryForm, GameForm, UserProfileForm, GroupForm
-
 
 # place cookies to allow users that are not logged in to play random
 def index(request):
@@ -30,17 +31,34 @@ def about(request):
     return render(request, 'P2G/about.html')
 
 
-def highscores(request):
-    game_list = Game.objects.all()
-    context_dict = {}
-    context_dict['games'] = game_list
-    game_counter = 0
-    for game in game_list:
-        score_list = Score.objects.filter(game=game).order_by('-score')[:10]
-        context_dict[game.name] = score_list
-        game_counter = game_counter + 1
+class HighscoresView(View):
+    #https://www.edureka.co/community/79813/how-look-dictionary-value-with-variable-in-django-template
+    @register.filter
+    def get_item(dictionary, key):
+        return dictionary.get(key)
 
-    return render(request, 'P2G/highscores.html', context=context_dict)
+    @method_decorator(login_required)
+    def get(self, request):
+        scores = {}
+        games = Game.objects.all().order_by('-likes')
+        for game in games:
+            scores[game.name] = Score.objects.filter(game=game).order_by('-score')[:5]
+
+        return render(request, 'P2G/highscores.html', {'games':games, 'scores':scores})
+
+
+class GameHighscoresView(View):
+    @register.filter
+    def get_image(query_set, user):
+        profile = query_set.get(user=user)
+        return profile.profile_image
+
+    @method_decorator(login_required)
+    def get(self, request, game_id):
+        game = Game.objects.get(id=game_id)
+        scores = Score.objects.filter(game=game).order_by('-score')
+        profiles = UserProfile.objects.all()
+        return render(request, 'P2G/game_highscores.html', {'profiles':profiles, 'game': game, 'scores': scores})
 
 
 class CategoriesView(View):
@@ -201,8 +219,8 @@ class ProfileView(View):
 class ListOtherPlayersView(View):
     @method_decorator(login_required)
     def get(self, request, username):
-        profiles = UserProfile.objects.all().order_by('user__username')
         user = User.objects.get(username=username)
+        profiles = UserProfile.objects.all().order_by('user__username').exclude(user=user)
         user_profile = UserProfile.objects.get(user=user)
         friends = user_profile.friends.all()
         return render(request, 'P2G/other_players.html', {'user_profile_list': profiles, 'friends': friends})
@@ -413,7 +431,7 @@ class AddScoreView(View):
 class ApproveScoreView(View):
     def get(self, request):
         user_id = int(request.GET['user_id'])
-        group_id = int(request.GET['user_id'])
+        group_id = int(request.GET['group_id'])
         group = Group.objects.get(id=group_id)
         if int(request.GET['score_id']) != -1:
             score_id = int(request.GET['score_id'])

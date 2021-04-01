@@ -12,6 +12,7 @@
                         <a href="{% url 'P2G:new_group' user.id game.id%}" class="btn" id="button">
                             New Group
                         </a>
+                    {% endif %}
                 </h3>
                 <p class="list-group-item-text">
                 <a href="{{ game.link }}" target="_blank">

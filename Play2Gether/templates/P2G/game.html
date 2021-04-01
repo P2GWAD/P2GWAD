@@ -33,6 +33,11 @@
         </div>
         <div class="col">
             <h1> Highscores </h1>
+            {% if user.is_authenticated %}
+                <a href="{% url 'P2G:game_highscores' game.id %}" class="btn btn-primary">
+                       See All
+                </a>
+            {% endif %}
             {% if scores %}
                 <table class="table">
                   <thead>
