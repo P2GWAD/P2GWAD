@@ -431,7 +431,7 @@ class AddScoreView(View):
 class ApproveScoreView(View):
     def get(self, request):
         user_id = int(request.GET['user_id'])
-        group_id = int(request.GET['user_id'])
+        group_id = int(request.GET['group_id'])
         group = Group.objects.get(id=group_id)
         if int(request.GET['score_id']) != -1:
             score_id = int(request.GET['score_id'])
