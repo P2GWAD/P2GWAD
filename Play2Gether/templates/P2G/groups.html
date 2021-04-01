@@ -10,7 +10,7 @@
         <div class="container">
             <h1> Groups </h1>
             <form action="{% url 'P2G:new_group' user.id -1%}">
-                <button type="submit">Create New Group</button>
+                <button type="submit" class="btn" id="button">Create New Group</button>
             </form>
         </div>
     </div>
@@ -24,8 +24,8 @@
                             <div class="list-group-item">
                                 <h4 class="list-group-item-heading">
                                     {{ group.name }}
-                                    <button class="btn btn-primary" style = "background-color: #046B33">
-                                        <a href="{% url 'P2G:group' group.group_id user_id %}" style="color: white;">
+                                    <button class="btn" id="button">
+                                        <a href="{% url 'P2G:group' group.group_id user_id %}" id="white_link">
                                             Open
                                         </a>
                                     </button>

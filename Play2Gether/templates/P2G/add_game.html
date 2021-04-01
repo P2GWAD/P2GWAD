@@ -16,7 +16,7 @@
             {{ errors }}
         {% endif %}
         <div>
-        No proper Category? Add a new one  <a href="{% url 'P2G:add_category' %}"> here </a>
+        No proper Category? Add a new one  <a href="{% url 'P2G:add_category' %}" id="green_link"> here </a>
         </div>
         <br>
     <div class="row">
@@ -32,7 +32,7 @@
                     <div class="p-2"></div>
                 {% endfor %}
                     <br/>
-                    <button class="btn btn-primary" type="submit" name="submit">
+                    <button class="btn" type="submit" name="submit" id="button">
                         Add Game
                     </button>
                     <div class="p-5"></div>

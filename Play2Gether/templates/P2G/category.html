@@ -9,10 +9,9 @@
     <div class="jumbotron p-4">
         <div class="container">
             <h1> {{ category.name }} </h1>
-            Use game_slug<br>
             {{ category.description }}
             <form action="{% url 'P2G:add_game' category.id %}">
-                <button type="submit">Add Game</button>
+                <button type="submit" class="btn" id="button">Add Game</button>
             </form>
         </div>
     </div>
@@ -22,17 +21,16 @@
             {% for game in games %}
                 <div class="list-group-item">
                     <h3 class="list-group-item-heading">
-                        <a href="{% url 'P2G:show_game' game.id %}">
-                                {{ game.name }}
-                        </a>
-                        {% if user.is_authenticated %}
-                            <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn btn-primary">
+                            <a href="{% url 'P2G:show_game' game.id %}" id="black_link">
+                                    {{ game.name }}
+                            </a>
+                            <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn" id="button">
                                     New Group
                             </a>
                         {% endif %}
                     </h3>
                     <p class="list-group-item-text">
-                        <a href="{{ game.link }}">{{ game.link }}</a>
+                        <a href="{{ game.link }}" id="green_link">{{ game.link }}</a>
                         <br>
                         {{ game.description }}
                     </p>

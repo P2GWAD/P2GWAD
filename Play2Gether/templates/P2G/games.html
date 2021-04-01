@@ -1,56 +1,43 @@
-{% extends 'P2G/base.html' %}
-{% load staticfiles %}
+{% extends 'P2G/base.html' %} 
+{% load staticfiles %} 
 
-{% block title_block %}
-    Games
-{% endblock %}
+{% block title_block %} 
+	Games 
+{% endblock %} 
 
 {% block body_block %}
-    <div class="jumbotron p-4">
-        <div class="container">
-            <h1> Games</h1>
+	<div class="jumbotron p-4">
+		<div class="container">
+			<h1>Games</h1>
 			{% if user.is_authenticated %}
-            <form action="{% url 'P2G:add_game' -1 %}">
-                <button type="submit" class="btn btn-primary" style = "background-color: #046B33">Add Game</button>
-            </form>
-			{% endif %}
-            Replace Game link by link to Game page
-            Add option to sort by likes or play count
-        </div>
-    </div>
-
-    <input type="search"
-           id="search-game-games"
-           class="form-control ds-input"
-           placeholder="Search Games..." />
-	</br></br>
-    <div id="game-listing">
-        {% if games %}
-            <div class="list-group">
-                {% for game in games %}
-                    <div class="list-group-item">
-                        <h3 class="list-group-item-heading">
-                            <a href="{% url 'P2G:show_game' game.id %}" style = "color: black">
-                                {{ game.name }}
-                            </a>
-                            {% if user.is_authenticated %}
-                                <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn btn-primary" style = "background-color: #046B33">
-                                    New Group
-                                </a>
-                            {% endif %}
-                        </h3>
-                        <p class="list-group-item-text">
-                        <a href="{{ game.link }}" target="_blank" style = "color: #046B33">
-                            {{ game.link }}
-                        </a>
-                        <br>
-                        {{ game.description }}
-                        </p>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            There are currently no Games.
-        {% endif %}
-    </div>
+			<form action="{% url 'P2G:add_game' -1 %}">
+				<button type="submit" class="btn" id="button">Add Game</button>
+			</form>
+			{% endif %} 
+		</div>
+	</div>
+	<input type="search" id="search-game-games" class="form-control ds-input" placeholder="Search Games..."/>
+	</br>
+	</br>
+	<div id="game-listing">
+	{% if games %}
+		<div class="list-group">
+			{% for game in games %}
+				<div class="list-group-item">
+					<h3 class="list-group-item-heading">
+						<a href="{% url 'P2G:show_game' game.id %}" id="black_link">{{ game.name }}</a>
+						<a href="{% url 'P2G:new_group' user.id game.id %}" class="btn" id="button">New Group</a>
+					</h3>
+					<p class="list-group-item-text">
+						<a href="{{ game.link }}" target="_blank" id="green_link">{{ game.link }}</a>
+						<br>
+						{{ game.description }}
+					</p>
+				</div>
+			{% endfor %}
+		</div>
+	{% else %} 
+		There are currently no Games. 
+	{% endif %}
+	</div>
 {% endblock %}
