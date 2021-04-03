@@ -3,3 +3,5 @@ You can find our Web App Play2Gether in the folder Play2Gether. This level (P2GW
 and therefore the App is stored in an extra directory.
 
 The requirement.txt file is alos located in the Play2Gether folder.
+
+As I am not sure whether you need the key to run it locally I have pushed it here (eventhough I know that one shoul keep the key secret...)
