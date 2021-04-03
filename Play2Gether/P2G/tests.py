@@ -389,6 +389,62 @@ class MessageMethodTests(TestCase):
         self.assertEquals(Message.objects.get(group=group).content, 'Hi there, this is a test message')
 
 
+class CookiesTest(TestCase):
+    
+    ""
+    Tests if cookies can be used, at least on the server-side.
+    ""
+    def testMiddleware(self):
+        
+        #Tests to see if the SessionMiddleware is present.
+        
+        self.assertTrue('P2GWAD.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE)
+
+    def sessionApp(self):
+        
+        #Makes sure the sessions app is present.
+        
+        self.assertTrue('P2GWAD.contrib.sessions' in settings.INSTALLED_APPS)
+        
+class persistanceTests(TestCase):
+    ""
+    Tests if session data is presisted by counting up number of accesses.
+    ""
+    
+    def visitCounter(self):
+        
+        #Tests the visit counter.
+        
+        for i in range(0, 10):
+            response = self.client.get(reverse('P2G:index'))
+            session = self.client.session
+            
+            self.assertIsNotNone(session['visits'])
+            self.assertIsNotNone(sessions['last_visit'])
+            
+            last_visit = datetime.now() - timedelta(days=1)
+            
+            session['last_visit'] = str(last_string)
+            session.save()
+            
+            self.assertEquals(session['visits'], i+1)
+            
+       def viewTemplate(self):
+        """
+        Check that each view uses the correct template.
+        """
+        populate()
+        
+        urls = []
+
+        templates = []
+        
+        for url, template in zip(urls, templates):
+            response = self.client.get(url)
+            self.assertTemplateUsed(response, template)  
+
+
+
 def add_group(game, name, users):
     g = Group.objects.get_or_create(game=game, name=name)[0]
     g.save()
