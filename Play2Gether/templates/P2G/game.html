@@ -11,27 +11,33 @@
         <div class="row">
         <div class="col">
             <h1> {{ game.name }} </h1>
-            {% if game.likes != 1 %}
-                ({{ game.likes }} Likes)
-            {% elif game.likes > 1 %}
-                ({{ game.likes }} Like)
-            {% endif %}
+            (<strong id="like_count"> {{ game.likes }} </strong> Likes)
             {% if game.play_count != 1 %}
                 ({{ game.play_count }} Games played)
             {% elif game.play_count > 1 %}
                 ({{ game.play_count }} Games played)
             {% endif %}
-            </br></br>
-            <a href="{{ game.link }}" class="btn" id="button" target="_blank">
-                Go to Game Webpage
+            <br><br>
+            {% if user.is_authenticated %}
+                <button data-gameid="{{ game.id }}"
+                        id="button"
+                        class="btn like-game"
+                        type="button">
+                    <span data-feather="thumbs-up"></span>
+                    Like Game
+                </button>
+            {% endif %}
+            <a href="{% url 'P2G:goto' %}?game_id={{ game.id }}" class="btn" id="button" target="_blank">
+                Go to Game
             </a>
+            <br><br>
+            {{ game.description }}
+            <br><br>
             {% if user.is_authenticated %}
             <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn" id="button">
                 New Group
             </a>
             {% endif %}
-            </br></br>
-            {{ game.description }}
         </div>
         <div class="col">
             <h1> Highscores </h1>

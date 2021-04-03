@@ -71,4 +71,28 @@ $(document).ready(function(){
         document.getElementById('current-members-ids').setAttribute('value', new_ids);
         clickedButton.hide();
     });
+
+    $('.like-cat').click(function(){
+        var clickedButton = $(this);
+        var categoryIdVar = $(this).attr('data-categoryid');
+
+        $.get('/P2G/like_category/',
+            {'category_id': categoryIdVar},
+            function(data){
+                $('#like_count').html(data);
+                clickedButton.hide();
+            })
+    });
+
+    $('.like-game').click(function(){
+        var clickedButton = $(this);
+        var gameIdVar = $(this).attr('data-gameid');
+
+        $.get('/P2G/like_game/',
+            {'game_id': gameIdVar},
+            function(data){
+                $('#like_count').html(data);
+                clickedButton.hide();
+            })
+    });
 });
