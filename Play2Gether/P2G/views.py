@@ -481,3 +481,49 @@ class PlayRandomView(View):
 
         return redirect(reverse('P2G:group',
                                 kwargs={'group_id': group.id, 'user_id': user_id}))
+
+class LikeCategoryView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        category_id = request.GET['category_id']
+
+        try:
+            category = Category.objects.get(id=int(category_id))
+        except Category.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+
+        category.likes = category.likes + 1
+        category.save()
+
+        return HttpResponse(category.likes)
+
+
+class LikeGameView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        game_id = request.GET['game_id']
+
+        try:
+            game = Game.objects.get(id=int(game_id))
+        except Game.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+
+        game.likes = game.likes + 1
+        game.save()
+
+        return HttpResponse(game.likes)
+
+class GotoView(View):
+    def get(self, request):
+        game_id = request.GET.get('game_id')
+        try:
+            selected_game = Game.objects.get(id=game_id)
+        except Game.DoesNotExist:
+            return redirect(reverse('P2G:index'))
+        selected_game.play_count = selected_game.play_count + 1
+        selected_game.save()
+        return redirect(selected_game.link)
