@@ -8,37 +8,50 @@
 {% block body_block %}
     <div class="jumbotron p-4">
         <div class="container">
-            <h1> {{ category.name }} </h1>
-            <strong id="like_count">{{ category.likes }}</strong> likes
+            <h1> {{ category.name }}</h1>
+            (<strong id="like_count"> {{ category.likes }} </strong> Likes)
+
             {% if user.is_authenticated %}
-                <input class="btn btn-primary P2G-like-category"
-                       type="button"
-                       value="Like Category"
-                       style="float: right; margin: 10px; background-color:#046B33;"
-                       data-categoryid="{{ category.id }}">
+                        <button data-categoryid="{{ category.id }}"
+                                id="button"
+                                class="btn like-cat"
+                                type="button">
+                            <span data-feather="thumbs-up"></span>
+                            Like Category
+                        </button>
             {% endif %}
-            Use game_slug<br>
+            <br> <br>
             {{ category.description }}
-            <form action="{% url 'P2G:add_game' category.id %}">
-                <button type="submit">Add Game</button>
-            </form>
+            <br> <br>
+
+            {% if user.is_authenticated %}
+                <form action="{% url 'P2G:add_game' category.id %}">
+                    <button type="submit" class="btn" id="button">Add Game</button>
+                </form>
+            {% endif %}
         </div>
     </div>
+
+
 
     {% if games %}
         <div class="list-group">
             {% for game in games %}
                 <div class="list-group-item">
                     <h3 class="list-group-item-heading">
-                        <a href="{% url 'P2G:go_to_game' %}?game_id={{ game.id }}" id="green_link" target="_blank">
-                            {{ game.link }}
-                        </a>
-                        <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn btn-primary">
-                            New Group
-                        </a>
+                            <a href="{% url 'P2G:show_game' game.id %}" id="black_link">
+                                    {{ game.name }}
+                            </a>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn" id="button">
+                                        New Group
+                                </a>
+                            {% endif %}
                     </h3>
                     <p class="list-group-item-text">
-                        <a href="{{ game.link }}">{{ game.link }}</a>
+                        <a href="{% url 'P2G:goto' %}?game_id={{ game.id }}" id="green_link" target="_blank">
+                            {{ game.link }}
+                        </a>
                         <br>
                         {{ game.description }}
                     </p>

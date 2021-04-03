@@ -25,38 +25,41 @@
                     <div class="panel-body">
                         <div class="list-group">
                             {% for list_user in user_profile_list %}
-                                <div class="list-group-item">
-                                    <h4 class="list-group-item-heading">
-                                        {% if user_profile.profile_image %}
-                                            <img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
-                                                 width="64"
-                                                 height="64"
-                                                 alt="Not Found">
-                                        {% else %}
-                                            <img src="{% static 'images/AltUserPicture.png' %}"
-                                                 width="64"
-                                                 height="64"
-                                                 alt="Not Found">
-                                        {% endif %}
-                                        <a href="{% url 'P2G:account' list_user.user.username %}" style="color:#046B33">
-                                            {{ list_user.user.username }}
-                                        </a>
-                                    {% if list_user in friends %}
-                                        <input class="btn"
-                                           type="button"
-                                           value="Your Friend"
-                                           style="float: right; margin: 10px;">
-                                    {% else %}
-                                        <input class="btn btn-primary P2G-add-friend"
+                                {% if user.id != list_user.user.id %}
+                                    <div class="list-group-item">
+                                        <h4 class="list-group-item-heading">
+                                            {% if list_user.profile_image %}
+                                                <img src="{{ MEDIA_URL }}{{ list_user.profile_image }}"
+                                                     width="64"
+                                                     height="64"
+                                                     alt="Not Found">
+                                            {% else %}
+                                                <img src="{% static 'images/AltUserPicture.png' %}"
+                                                     width="64"
+                                                     height="64"
+                                                     alt="Not Found">
+                                            {% endif %}
+                                            <a href="{% url 'P2G:account' list_user.user.username %}" id="black_link">
+                                                {{ list_user.user.username }}
+                                            </a>
+                                        {% if list_user in friends %}
+                                            <input class="btn"
                                                type="button"
-                                               value="Add to Friends"
-                                               style="float: right; margin: 10px; background-color:#046B33;"
-                                               data-friend-id="{{ list_user.user.id }}"
-                                               data-user-id="{{ user.id }}">
-                                    {% endif %}
+                                               value="Your Friend"
+											   id = "remove_button"
+											   style = "background-color: #5D9F7B">
+                                        {% else %}
+                                            <input class="btn P2G-add-friend"
+                                                   type="button"
+                                                   value="Add to Friends"
+                                                   id="remove_button"
+                                                   data-friend-id="{{ list_user.user.id }}"
+                                                   data-user-id="{{ user.id }}">
+                                        {% endif %}
                                     </h4>
                                 </br>
                                 </div>
+                                {% endif %}
                             {% endfor %}
                         </div>
                     </div>

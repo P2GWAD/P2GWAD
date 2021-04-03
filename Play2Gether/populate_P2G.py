@@ -1,6 +1,11 @@
 import os
 import random
 
+from PIL import Image
+from django.core.files.base import ContentFile
+from django.core.files.images import ImageFile
+from django.utils.six import BytesIO
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'Play2Gether.settings')
 
@@ -68,7 +73,7 @@ def populate():
                             'description': 'If you can find your favorite game you might find it in this collection of unique games'},
             }
 
-    user_profiles = [{'name': 'Niklas',
+    user_profiles = [{'name': 'Tom',
                      'bio': 'Hey there, I am Nik and always looking for an exciting match'},
                      {'name': 'John',
                       'bio': '20, passionate Fortnite player from Down Under '},
@@ -76,12 +81,12 @@ def populate():
                       'bio': 'Secretary from the US, always open for a nice chat'},
                      {'name': 'Richard',
                       'bio': 'Scientist searching for intellectual opponents'},
-                     {'name': 'Hugo',
+                     {'name': 'Robert',
                       'bio': 'Retired Police officer with skat experience'},
                      {'name': 'Malte',
-                      'bio': 'Passionate fisher and Norway fan'},
+                      'bio': 'Passionate fisher and Denmark fan'},
                      {'name': 'Naomi',
-                      'bio': 'I Love Tennis'},
+                      'bio': 'I Love Music'},
                      {'name': 'Toni',
                       'bio': 'The best thing in live are friends and good pasta'},
                      {'name': 'Charlotte',
@@ -132,7 +137,16 @@ def add_user(name, bio):
     u.save()
     p = UserProfile.objects.get_or_create(user=u)[0]
     p.bio = bio
-    p.save()
+
+    # https://stackoverflow.com/questions/54891829/typeerror-memoryview-a-bytes-like-object-is-required-not-jpegimagefile
+    image = 'populate_images/' + name + '.jpg'
+    img_in = Image.open(image)
+    buf = BytesIO()
+    img_in.save(buf, 'jpeg')
+    buf.seek(0)
+    p.profile_image.save(name + '.jpeg', buf, True)
+    buf.close()
+    img_in.close()
     return p
 
 

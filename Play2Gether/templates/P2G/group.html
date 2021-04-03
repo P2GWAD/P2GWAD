@@ -13,7 +13,9 @@
                     <h1> {{ name }}</h1>
                     <br>
                     You are playing: {{ game.name }}
-                    (<a href="{{ game.link }}" target="_blank">{{ game.link }}</a>)
+                    (<a href="{% url 'P2G:goto' %}?game_id={{ game.id }}" id="green_link" target="_blank">
+                        {{ game.link }}
+                    </a>)
                     <br>
                     <div>
                         {% if users|length == 2 %}
@@ -30,7 +32,7 @@
                     <br>
                     Enter a New Score
                     <input id="group-new-score-input" type="text" size="10" value="">
-                    <input id="group-new-score-submit" class="btn btn-primary" type="button" value="Submit"
+                    <input id="group-new-score-submit" class="btn" type="button" value="Submit" style="background-color: #046B33; color: white;"
                            data-user-id="{{ user_id }}"
                            data-group-id="{{ group_id }}">
                 </div>
@@ -98,8 +100,8 @@
             </div>
 
             <br>
-            <input id="chat-message-input" type="text" size="100" value=""><br>
-            <input id="chat-message-submit" class="btn btn-primary" type="button" value="Send"
+            <input id="chat-message-input" type="text" size="100" value=""></br></br>
+            <input id="chat-message-submit" class="btn" type="button" value="Send" style="background-color: #046B33; color: white;"
                    data-user-id="{{ user_id }}"
                    data-group-id="{{ group_id }}">
             <input type="hidden" id="data-group-id" name="variable" value="{{ group_id }}" readonly>
@@ -126,15 +128,17 @@
                                 <td>{{ score.date }}</td>
                                 <td>{{ score.score }}</td>
                                 <td>
-                                    <button class="btn btn-info btn-sm group-approve-score"
+                                    <button class="btn btn-sm group-approve-score"
                                             type="button"
+											id = "button"
                                             data-score-id="{{ score.id }}">
                                         Approve
                                         </button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-info btn-sm group-deny-score"
+                                    <button class="btn btn-sm group-deny-score"
                                             type="button"
+											id = "button"
                                             data-score-id="{{ score.id }}">
                                         Deny
                                     </button>

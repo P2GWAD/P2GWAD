@@ -9,13 +9,20 @@
     {% if error_message %}
         {{ error_message }}
     {% endif %}
-    <div class = "row" style = "padding-left:15px">
-		<button type="button" style="background:#046B33"><a href="{% url 'P2G:playRandom'%}" style="color:white"><h1>Play A Random Game</h1></a></button>
+    <div class = "row" id="play_random">
+		<button type="button" class="btn" id="button"><a href="{% url 'P2G:playRandom'%}" id="white_link"><h1>Play A Random Game</h1></a></button>
 	</div>
 	
 	</br></br></br>
 	
-	<div class="container-fluid col-md-12 col-lg-12">
+	<div class= "col-md-10 col-lg-10">
+			</br></br></br>
+			<h1 class="d-flex justify-content-center">Welcome to Play2gether!</h1>
+			</br>
+			<h3 class="d-flex justify-content-center">The gaming hub of the future</h3>
+	</div>
+	</br></br></br>
+	<div class="container-fluid col-lg-12 d-none d-lg-block">
 	<div class="row d-flex justify-content-center">
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 			<ol class="carousel-indicators">
@@ -46,12 +53,6 @@
 		
 		</br></br></br>
 		
-		<div class= "col-md-10 col-lg-10">
-			</br></br></br>
-			<h1 class="d-flex justify-content-center">Welcome to Play2gether!</h1>
-			</br>
-			<h3 class="d-flex justify-content-center">The gaming hub of the future</h3>
-		</div>
 	</div>
 	</div>
 	

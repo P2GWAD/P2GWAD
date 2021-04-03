@@ -256,7 +256,7 @@ class GroupViewTests(TestCase):
         category = add_cat('TestName', 'TestDescription', 10)
         game = add_game(category, 'TestGameName', "http://www.test.com", 'TestGameDescription', 10, 10)
         group = add_group(game, 'Testgroup', [self.user])
-        add_score(game, self.user, 1234567, False, timezone.now(), group)
+        add_score(game, self.user, 1234567, timezone.now(), group)
 
         response = self.client.get(reverse('P2G:group', kwargs={'group_id': group.id, 'user_id': self.user.id}))
 
@@ -285,57 +285,164 @@ class GroupViewTests(TestCase):
 
 class ScoreMethodTests(TestCase):
     """
-    Check that scores date is not in the future
-    """
-    def Test(self):
-        pass
-
-    """
     Check that newly added scores are initially not approved
     """
-    def Test(self):
-        pass
+    def test_score_is_initially_not_approved(self):
+        self.user = add_user('John', 'Test').user
+        self.user.set_password('Weddemann')
+        self.user.save()
+        self.client.force_login(self.user)
+        category = add_cat('TestName', 'TestDescription', 10)
+        game = add_game(category, 'TestGameName', "http://www.test.com", 'TestGameDescription', 10, 10)
+        group = add_group(game, 'Testgroup', [self.user])
+        score = add_score(game, self.user, 1234567, timezone.now(), group)
+
+        self.assertTrue(score.approved == False)
+
 
     """
     Check that scores can be approved
     """
-    def Test(self):
-        pass
+    def test_scores_can_be_approved(self):
+        self.user = add_user('John', 'Test').user
+        self.user.set_password('Weddemann')
+        self.user.save()
+        self.client.force_login(self.user)
+        category = add_cat('TestName', 'TestDescription', 10)
+        game = add_game(category, 'TestGameName', "http://www.test.com", 'TestGameDescription', 10, 10)
+        group = add_group(game, 'Testgroup', [self.user])
+        score = add_score(game, self.user, 1234567, timezone.now(), group)
+
+        self.assertFalse(score.approved)
+        self.client.get('/P2G/approve_score/', {'score_id': score.id, 'group_id': group.id, 'user_id': self.user.id})
+        updated_score = Score.objects.get(id=score.id)
+        self.assertTrue(updated_score.approved)
+
 
     """
     Check that scores can be denied
     """
-    def Test(self):
-        pass
+    def test_scores_can_be_denied(self):
+        self.user = add_user('John', 'Test').user
+        self.user.set_password('Weddemann')
+        self.user.save()
+        self.client.force_login(self.user)
+        category = add_cat('TestName', 'TestDescription', 10)
+        game = add_game(category, 'TestGameName', "http://www.test.com", 'TestGameDescription', 10, 10)
+        group = add_group(game, 'Testgroup', [self.user])
+        score = add_score(game, self.user, 1234567, timezone.now(), group)
+
+        self.assertFalse(score.approved)
+        self.client.get('/P2G/remove_score/', {'score_id': score.id, 'group_id': group.id, 'user_id': self.user.id})
+        updated_score = Score.objects.filter(id=score.id).count()
+        self.assertTrue(updated_score == 0)
 
 
 class UserMethodTests(TestCase):
     """
-    Check that users can change there Bio
+    Check that users can add friends
     """
-    def Test(self):
-        pass
+    def test_users_can_add_friends(self):
+        friend = add_user('Max', 'TestBio')
+        profile = add_user('John', 'Test')
+        self.user = profile.user
+        self.user.set_password('Weddemann')
+        self.user.save()
+        self.client.force_login(self.user)
+        self.client.get('/P2G/add_friend/', {'user_id': profile.id, 'friend_id': friend.id})
 
-    """
-    Check that users can add new friends
-    """
-    def Test(self):
-        pass
+        self.assertEquals(profile.friends.all()[0], UserProfile.objects.get(id=friend.id))
+
 
     """
     Check that users can remove friends
     """
-    def Test(self):
-        pass
+    def test_users_can_remove_friends(self):
+        friend = add_user('Max', 'TestBio')
+        profile = add_user('John', 'Test')
+        self.user = profile.user
+        self.user.set_password('Weddemann')
+        self.user.save()
+        self.client.force_login(self.user)
+        self.client.get('/P2G/add_friend/', {'user_id': profile.id, 'friend_id': friend.id})
 
-
+        self.assertEquals(profile.friends.all()[0], UserProfile.objects.get(id=friend.id))
+        self.client.get('/P2G/remove_friend/', {'user_id': profile.id, 'friend_id': friend.id})
+        self.assertEquals(profile.friends.all().count(), 0)
 
 class MessageMethodTests(TestCase):
     """
     Check that users can send messages
     """
-    def Test(self):
-        pass
+    def test_message_send_method(self):
+        self.user = add_user('John', 'Test').user
+        self.user.set_password('Weddemann')
+        self.user.save()
+        self.client.force_login(self.user)
+        category = add_cat('TestName', 'TestDescription', 10)
+        game = add_game(category, 'TestGameName', "http://www.test.com", 'TestGameDescription', 10, 10)
+        group = add_group(game, 'Testgroup', [self.user])
+
+        self.client.get('/P2G/group_add_message/', {'user_id': self.user.id,
+                                                    'group_id': group.id,
+                                                    'message': 'Hi there, this is a test message'})
+        self.assertEquals(Message.objects.get(group=group).content, 'Hi there, this is a test message')
+
+
+class CookiesTest(TestCase):
+    
+    ""
+    Tests if cookies can be used, at least on the server-side.
+    ""
+    def testMiddleware(self):
+        
+        #Tests to see if the SessionMiddleware is present.
+        
+        self.assertTrue('P2GWAD.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE)
+
+    def sessionApp(self):
+        
+        #Makes sure the sessions app is present.
+        
+        self.assertTrue('P2GWAD.contrib.sessions' in settings.INSTALLED_APPS)
+        
+class persistanceTests(TestCase):
+    ""
+    Tests if session data is presisted by counting up number of accesses.
+    ""
+    
+    def visitCounter(self):
+        
+        #Tests the visit counter.
+        
+        for i in range(0, 10):
+            response = self.client.get(reverse('P2G:index'))
+            session = self.client.session
+            
+            self.assertIsNotNone(session['visits'])
+            self.assertIsNotNone(sessions['last_visit'])
+            
+            last_visit = datetime.now() - timedelta(days=1)
+            
+            session['last_visit'] = str(last_string)
+            session.save()
+            
+            self.assertEquals(session['visits'], i+1)
+            
+       def viewTemplate(self):
+        """
+        Check that each view uses the correct template.
+        """
+        populate()
+        
+        urls = []
+
+        templates = []
+        
+        for url, template in zip(urls, templates):
+            response = self.client.get(url)
+            self.assertTemplateUsed(response, template)  
+
 
 
 def add_group(game, name, users):
@@ -346,10 +453,8 @@ def add_group(game, name, users):
     return g
 
 
-def add_score(game, user, score, approved, date, group):
+def add_score(game, user, score, date, group):
     s = Score.objects.get_or_create(user=user, score=score, date=date, game=game, group=group)[0]
-    s.approved = approved
-    s.save()
     return s
 
 

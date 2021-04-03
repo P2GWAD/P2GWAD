@@ -72,28 +72,27 @@ $(document).ready(function(){
         clickedButton.hide();
     });
 
-    $('.P2G-like-category').click(function () {
+    $('.like-cat').click(function(){
         var clickedButton = $(this);
-        var category_id = $(this).attr('data-categoryid');
+        var categoryIdVar = $(this).attr('data-categoryid');
 
-        clickedButton.attr('disabled', 'disabled')
-        clickedButton.attr('value', 'Category Liked')
-        clickedButton.attr('class', "btn")
-
-        $.get('/P2G/like_category/', {'category_id': category_id});
-
+        $.get('/P2G/like_category/',
+            {'category_id': categoryIdVar},
+            function(data){
+                $('#like_count').html(data);
+                clickedButton.hide();
+            })
     });
 
-    $('.P2G-like-game').click(function () {
+    $('.like-game').click(function(){
         var clickedButton = $(this);
-        var game_id = $(this).attr('data-gameid');
+        var gameIdVar = $(this).attr('data-gameid');
 
-        clickedButton.attr('disabled', 'disabled')
-        clickedButton.attr('value', 'Game Liked')
-        clickedButton.attr('class', "btn")
-
-        $.get('/P2G/like_game/', { 'game_id': game_id });
-
+        $.get('/P2G/like_game/',
+            {'game_id': gameIdVar},
+            function(data){
+                $('#like_count').html(data);
+                clickedButton.hide();
+            })
     });
-
 });

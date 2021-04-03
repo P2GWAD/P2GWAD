@@ -9,8 +9,11 @@
     <div class="jumbotron p-4">
         <div class="container">
             <h1 class="jumbotron-heading">Your Friends</h1>
-            <button type="button" class="btn btn-primary" style = "background-color: #046B33"><a href="{% url 'P2G:otherPlayers' user.username%}" style= "color:white">Find new Friends</button>
-                Search New Friends
+            <button type="button" class="btn" id="button">
+                <a href="{% url 'P2G:otherPlayers' user.username%}" id="white_link">
+                    Find new Friends
+                </a>
+            </button>
             </button>
         </div>
     </div>
@@ -30,8 +33,8 @@
                             {% for friend in friends %}
                                 <div class="list-group-item">
                                     <h4 class="list-group-item-heading">
-                                        {% if user_profile.profile_image %}
-                                            <img src="{{ MEDIA_URL }}{{ user_profile.profile_image }}"
+                                        {% if friend.profile_image %}
+                                            <img src="{{ MEDIA_URL }}{{ friend.profile_image }}"
                                                  width="64"
                                                  height="64"
                                                  alt="Not Found">
@@ -41,13 +44,13 @@
                                                  height="64"
                                                  alt="Not Found">
                                         {% endif %}
-                                        <a href="{% url 'P2G:account' friend.user.username %}">
+                                        <a href="{% url 'P2G:account' friend.user.username %}" id="black_link">
                                             {{ friend.user.username }}
                                         </a>
                                         <input class="btn P2G-remove-friend"
                                                type="button"
                                                value="Remove"
-                                               style="float: right; margin: 10px;"
+                                               id="remove_button"
                                                data-friend-id="{{ friend.user.id }}"
                                                data-friend-name="{{ friend.user.username }}"
                                                data-user-id="{{ user.id }}">

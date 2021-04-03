@@ -9,6 +9,7 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('games/', views.GamesView.as_view(), name='games'),
     path('highscores/', views.HighscoresView.as_view(), name='highscores'),
+    path('game_highscores/<game_id>', views.GameHighscoresView.as_view(), name='game_highscores'),
     path('other_players/<username>/', views.ListOtherPlayersView.as_view(), name='otherPlayers'),
     path('play_random/', views.PlayRandomView.as_view(), name='playRandom'),
     path('categories/', views.CategoriesView.as_view(), name='categories'),
@@ -36,4 +37,7 @@ urlpatterns = [
     path('add_score/', views.AddScoreView.as_view(), name='add_score'),
     path('approve_score/', views.ApproveScoreView.as_view(), name='approve_score'),
     path('remove_score/', views.RemoveScoreView.as_view(), name='remove_score'),
+    path('like_category/', views.LikeCategoryView.as_view(), name='like_category'),
+    path('like_game/', views.LikeGameView.as_view(), name='like_game'),
+    path('goto/', views.GotoView.as_view(), name='goto'),
 ]
