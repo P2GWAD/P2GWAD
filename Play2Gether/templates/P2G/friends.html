@@ -9,7 +9,11 @@
     <div class="jumbotron p-4">
         <div class="container">
             <h1 class="jumbotron-heading">Your Friends</h1>
-            <button type="button" class="btn" id="button"><a href="{% url 'P2G:otherPlayers' user.username%}" id="white_link">Find new Friends</button>
+            <button type="button" class="btn" id="button">
+                <a href="{% url 'P2G:otherPlayers' user.username%}" id="white_link">
+                    Find new Friends
+                </a>
+            </button>
             </button>
         </div>
     </div>

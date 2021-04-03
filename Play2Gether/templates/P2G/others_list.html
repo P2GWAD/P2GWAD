@@ -24,19 +24,20 @@
                                     </a>
                                 {% if list_user in friends %}
                                     <input class="btn"
-                                       type="button"								
+                                       type="button"
                                        value="Your Friend"
-									   id = "remove_button"
-									   style = "background-color: #5D9F7B">
+                                       id = "remove_button"
+                                       style = "background-color: #5D9F7B">
                                 {% else %}
                                 <input class="btn P2G-add-friend"
                                        type="button"
                                        value="Add to Friends"
-                                       id = "remove_button"
+                                       id="remove_button"
                                        data-friend-id="{{ list_user.user.id }}"
                                        data-user-id="{{ user.id }}">
-                            {% endif %}
+                                {% endif %}
                             </h4>
+                        </br>
                         </div>
                         {% endif %}
                     {% endfor %}
@@ -47,3 +48,4 @@
         {% endif %}
     </div>
 </div>
+<script src="{% static 'js/P2G-ajax.js' %}" crossorigin="anonymous"></script>

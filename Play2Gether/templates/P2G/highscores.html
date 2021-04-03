@@ -16,10 +16,10 @@
         {% if forloop.first %}<div class="row">{% endif %}
         <div class="col">
             <h5>
-                <a href="{% url 'P2G:show_game' game.id %}" style = "color: black">
+                <a href="{% url 'P2G:show_game' game.id %}" id="black_link">
                     {{ game.name }}
                 </a>
-                <a href="{% url 'P2G:game_highscores' game.id %}" class="btn btn-primary">
+                <a href="{% url 'P2G:game_highscores' game.id %}" class="btn" id="button">
                     See All
                 </a>
             </h5>
