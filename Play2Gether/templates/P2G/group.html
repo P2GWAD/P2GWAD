@@ -126,15 +126,17 @@
                                 <td>{{ score.date }}</td>
                                 <td>{{ score.score }}</td>
                                 <td>
-                                    <button class="btn btn-info btn-sm group-approve-score"
+                                    <button class="btn btn-sm group-approve-score"
                                             type="button"
+											id = "button"
                                             data-score-id="{{ score.id }}">
                                         Approve
                                         </button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-info btn-sm group-deny-score"
+                                    <button class="btn btn-sm group-deny-score"
                                             type="button"
+											id = "button"
                                             data-score-id="{{ score.id }}">
                                         Deny
                                     </button>
