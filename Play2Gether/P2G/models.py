@@ -6,7 +6,6 @@ class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
     likes = models.IntegerField(default=0)
     description = models.CharField(max_length=4096, null=True)
-
     def __str__(self):
         return self.name
 
@@ -14,7 +13,6 @@ class Category(models.Model):
 class Game(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=64, unique=True)
-    link = models.URLField(null=False)
     play_count = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     description = models.CharField(max_length=4096, null=True)

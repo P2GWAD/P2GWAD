@@ -14,7 +14,7 @@
             (<strong id="like_count"> {{ game.likes }} </strong> Likes)
             {% if game.play_count != 1 %}
                 ({{ game.play_count }} Games played)
-            {% elif game.play_count > 1 %}
+                {% elif game.play_count > 1 %}
                 ({{ game.play_count }} Games played)
             {% endif %}
             <br><br>
