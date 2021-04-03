@@ -1,3 +1,7 @@
+footer{
+	width: 100%;
+}
+
 #list_item_menu {
 	list-style-type: none;
 }
@@ -10,11 +14,6 @@
 	background: #046B33;
 }
 
-footer {
-	position:absolute; 
-	padding:15px;
-}
-
 #green_link {
 	color:#046B33;
 }
@@ -23,10 +22,12 @@ footer {
 	font-size: 130%;
 }
 
+
 #button{
 	background-color: #046B33;
 	color: white;
 }
+
 
 #white_link {
 	color:white;
@@ -38,6 +39,7 @@ footer {
 	background-color: #046B33;
 	color: white;
 }
+
 
 #score{
 	font-size: 20px; 

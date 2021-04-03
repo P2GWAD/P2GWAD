@@ -24,13 +24,15 @@
                                     </a>
                                 {% if list_user in friends %}
                                     <input class="btn"
-                                       type="button"
-                                       value="Your Friend">
+                                       type="button"								
+                                       value="Your Friend"
+									   id = "remove_button"
+									   style = "background-color: #5D9F7B">
                                 {% else %}
                                 <input class="btn P2G-add-friend"
                                        type="button"
                                        value="Add to Friends"
-                                       id = "button"
+                                       id = "remove_button"
                                        data-friend-id="{{ list_user.user.id }}"
                                        data-user-id="{{ user.id }}">
                             {% endif %}
