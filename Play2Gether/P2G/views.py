@@ -123,6 +123,14 @@ class CategoryView(View):
         context_dict['games'] = games
         return render(request, 'P2G/category.html', context=context_dict)
 
+class LikeCategoryView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        category_id = int(request.GET['category_id'])
+        category = Category.objects.get(id=category_id)
+        category.likes = category.likes + 1
+        category.save()
+        return redirect('P2G/category.html')
 
 class AddGameView(View):
     @method_decorator(login_required)
@@ -174,10 +182,25 @@ class GameSuggestionView(View):
 
         return render(request, 'P2G/game-suggestion.html', {'games': games})
 
+class LikeGameView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        game_id = int(request.GET['game_id'])
+        game = Game.objects.get(id=game_id)
+        game.likes = game.likes + 1
+        game.save()
+        return redirect('P2G/game.html')
+
+class GoToGameView(View):
+    def get(self, request):
+        game_id = int(request.GET['game_id'])
+        game = Game.objects.get(id=game_id)#
+        game.play_count = game.play_count + 1
+        game.save()
+        return redirect(game.link)
 
 def register_profile(request):
     form = UserProfileForm()
-    print('Hello')
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
 
@@ -280,7 +303,7 @@ class RemoveFriendView(View):
         friend_profile = UserProfile.objects.get(user=friend)
         user_profile.friends.remove(friend_profile)
         friends = user_profile.friends.all().order_by('user__username')
-        return render(request, 'P2G/friend_list.html', {'friends': friends})
+        return render(request, 'P2G/friend_list.html', {})
 
 
 class SearchFriendsView(View):

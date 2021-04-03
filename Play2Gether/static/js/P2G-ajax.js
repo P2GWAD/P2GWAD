@@ -61,7 +61,7 @@ $(document).ready(function(){
         };
     });
 
-    $('.P2G-add-user').click(function(){
+    $('.P2G-add-user').click(function () {
         var clickedButton = $(this);
         var username = $(this).attr('data-username');
         var user_id = $(this).attr('data-user-id');
@@ -71,4 +71,29 @@ $(document).ready(function(){
         document.getElementById('current-members-ids').setAttribute('value', new_ids);
         clickedButton.hide();
     });
+
+    $('.P2G-like-category').click(function () {
+        var clickedButton = $(this);
+        var category_id = $(this).attr('data-categoryid');
+
+        clickedButton.attr('disabled', 'disabled')
+        clickedButton.attr('value', 'Category Liked')
+        clickedButton.attr('class', "btn")
+
+        $.get('/P2G/like_category/', {'category_id': category_id});
+
+    });
+
+    $('.P2G-like-game').click(function () {
+        var clickedButton = $(this);
+        var game_id = $(this).attr('data-gameid');
+
+        clickedButton.attr('disabled', 'disabled')
+        clickedButton.attr('value', 'Game Liked')
+        clickedButton.attr('class', "btn")
+
+        $.get('/P2G/like_game/', { 'game_id': game_id });
+
+    });
+
 });

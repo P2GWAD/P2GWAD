@@ -38,6 +38,11 @@
                                 </a>
                         </h3>
                         <p class="list-group-item-text">
+                        {% if game.likes != 1 %}
+                            ({{ game.likes }} Likes)
+                        {% elif game.likes > 1 %}
+                            ({{ game.likes }} Like)
+                        {% endif %}
                         <a href="{{ game.link }}" target="_blank" style = "color: #046B33">
                             {{ game.link }}
                         </a>

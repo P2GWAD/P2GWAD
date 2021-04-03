@@ -9,28 +9,35 @@
     <div class="jumbotron p-4">
         <div class="container">
         <div class="row">
-        <div class="col">
-            <h1> {{ game.name }} </h1>
-            {% if game.likes != 1 %}
+            <div class="col">
+                <h1> {{ game.name }} </h1>
+                {% if game.likes != 1 %}
                 ({{ game.likes }} Likes)
-            {% elif game.likes > 1 %}
+                {% elif game.likes > 1 %}
                 ({{ game.likes }} Like)
-            {% endif %}
-            {% if game.play_count != 1 %}
+                {% endif %}
+                {% if game.play_count != 1 %}
                 ({{ game.play_count }} Games played)
-            {% elif game.play_count > 1 %}
+                {% elif game.play_count > 1 %}
                 ({{ game.play_count }} Games played)
-            {% endif %}
-            <br>
-            <a href="{{ game.link }}" class="btn btn-primary" target="_blank">
-                Go to Game Webpage
-            </a>
-            <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn btn-primary">
-                New Group
-            </a>
-            <br>
-            {{ game.description }}
-        </div>
+                {% endif %}
+                <br>
+                <a href="{% url 'P2G:go_to_game' %}?game_id={{ game.id }}" class="btn" id="button" target="_blank">
+                    Go to Game
+                </a>
+                <a href="{% url 'P2G:new_group' user.id game.id %}" class="btn btn-primary">
+                    New Group
+                </a>
+                {% if user.is_authenticated %}
+                <input class="btn btn-primary P2G-like-game"
+                       type="button"
+                       value="Like Game"
+                       style="float: right; margin: 10px; background-color:#046B33;"
+                       data-gameid="{{ game.id }}">
+                {% endif %}
+                <br>
+                {{ game.description }}
+            </div>
         <div class="col">
             <h1> Highscores </h1>
             {% if scores %}
