@@ -40,11 +40,11 @@ class HighscoresView(View):
     @method_decorator(login_required)
     def get(self, request):
         scores = {}
-        games = Game.objects.all().order_by('-likes')
+        games = Game.objects.all().order_by('name')
         for game in games:
             scores[game.name] = Score.objects.filter(game=game).order_by('-score')[:5]
 
-        return render(request, 'P2G/highscores.html', {'games':games, 'scores':scores})
+        return render(request, 'P2G/highscores.html', {'games':games, 'scores': scores})
 
 
 class GameHighscoresView(View):
