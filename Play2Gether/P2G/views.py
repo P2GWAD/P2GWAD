@@ -48,6 +48,7 @@ class HighscoresView(View):
 
 
 class GameHighscoresView(View):
+    # filter called by the template to get proper scores for highscores view
     @register.filter
     def get_image(query_set, user):
         profile = query_set.get(user=user)
@@ -72,7 +73,7 @@ class GamesView(View):
         games_list = Game.objects.all().order_by('name')
         return render(request, 'P2G/games.html', {'games': games_list})
 
-
+# add Category take care of form processing
 class AddCategoryView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -102,14 +103,6 @@ class CategoryView(View):
         context_dict['games'] = games
         return render(request, 'P2G/category.html', context=context_dict)
 
-class LikeCategoryView(View):
-    @method_decorator(login_required)
-    def get(self, request):
-        category_id = int(request.GET['category_id'])
-        category = Category.objects.get(id=category_id)
-        category.likes = category.likes + 1
-        category.save()
-        return redirect('P2G/category.html')
 
 class AddGameView(View):
     @method_decorator(login_required)
@@ -161,22 +154,6 @@ class GameSuggestionView(View):
 
         return render(request, 'P2G/game-suggestion.html', {'games': games})
 
-class LikeGameView(View):
-    @method_decorator(login_required)
-    def get(self, request):
-        game_id = int(request.GET['game_id'])
-        game = Game.objects.get(id=game_id)
-        game.likes = game.likes + 1
-        game.save()
-        return redirect('P2G/game.html')
-
-class GoToGameView(View):
-    def get(self, request):
-        game_id = int(request.GET['game_id'])
-        game = Game.objects.get(id=game_id)#
-        game.play_count = game.play_count + 1
-        game.save()
-        return redirect(game.link)
 
 def register_profile(request):
     form = UserProfileForm()
@@ -284,7 +261,7 @@ class RemoveFriendView(View):
         friends = user_profile.friends.all().order_by('user__username')
         return render(request, 'P2G/friend_list.html', {})
 
-
+# Used by ajax to search in players
 class SearchFriendsView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -306,7 +283,7 @@ class SearchFriendsView(View):
 
         return render(request, 'P2G/friend_list.html', {'friends': friends})
 
-
+# Used by ajax to search all the players
 class SearchOthersView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -329,7 +306,7 @@ class SearchOthersView(View):
 
         return render(request, 'P2G/others_list.html', {'user_profile_list': user_profile_list, 'friends': friends})
 
-
+# collecting all the information for the template
 class GroupView(View):
     def get(self, request, group_id, user_id):
         group = Group.objects.get(id=int(group_id))
@@ -346,7 +323,7 @@ class GroupView(View):
         context_dict['approvals'] = Score.objects.filter(approved=False).filter(group=group).exclude(user=user_id)
         return render(request, 'P2G/group.html', context=context_dict)
 
-
+# Add message to the chat
 class GroupAddMessageView(View):
     def get(self, request):
         group_id = request.GET['group_id']
@@ -358,7 +335,7 @@ class GroupAddMessageView(View):
         messages = Message.objects.filter(group=group).order_by('date')
         return render(request, 'P2G/group_log.html', {'messages': messages})
 
-
+# send new message to the user that have been added by other users
 class GroupUpdateView(View):
     def get(self, request):
         group_id = int(request.GET['group_id'])
@@ -366,7 +343,7 @@ class GroupUpdateView(View):
         messages = Message.objects.filter(group=group).order_by('date')
         return render(request, 'P2G/group_log.html', {'messages': messages})
 
-
+# reply to client if new messages have been added to the chat
 class MessageCheckView(View):
     def get(self, request):
         latest_client = int(request.GET['latest_message_id'])
@@ -379,7 +356,7 @@ class MessageCheckView(View):
             out = latest_server[0].id
         return HttpResponse(out)
 
-
+# Processin the form for the creation of new groups
 class NewGroupView(View):
     @method_decorator(login_required)
     def get(self, request, user_id, game_id):
@@ -434,6 +411,7 @@ class GroupsView(View):
         return render(request, 'P2G/groups.html', {'groups': group_collection, 'user_id': user_id})
 
 
+# adding new scores submitted by client via ajax
 class AddScoreView(View):
     def get(self, request):
         group_id = int(request.GET['group_id'])
@@ -450,7 +428,7 @@ class AddScoreView(View):
         scores = Score.objects.filter(group=group).order_by('-score')[:5]
         return render(request, 'P2G/highscore_table.html', {'scores': scores})
 
-
+# approve scores submitted in database that have been approved by other users
 class ApproveScoreView(View):
     def get(self, request):
         user_id = int(request.GET['user_id'])
@@ -464,18 +442,19 @@ class ApproveScoreView(View):
         approvals = Score.objects.filter(approved=False).filter(group=group).order_by('date').exclude(user=user_id)
         return render(request, 'P2G/approval_table.html', {'approvals': approvals})
 
-
+# deny scores and delete them from database, if score has been denied by other users
 class RemoveScoreView(View):
     def get(self, request):
         score_id = int(request.GET['score_id'])
         user_id = int(request.GET['user_id'])
-        group_id = int(request.GET['user_id'])
+        group_id = int(request.GET['group_id'])
+
         group = Group.objects.get(id=group_id)
         Score.objects.filter(id=score_id).delete()
         approvals = Score.objects.filter(approved=False).filter(group=group).order_by('date').exclude(user=user_id)
         return render(request, 'P2G/approval_table.html', {'approvals': approvals})
 
-
+# add user to the random group if there is space left, otherwise select a random game and open a new random group and assign user to it
 class PlayRandomView(View):
     def get(self, request):
         if request.user.is_authenticated:
@@ -506,6 +485,7 @@ class PlayRandomView(View):
         return redirect(reverse('P2G:group',
                                 kwargs={'group_id': group.id, 'user_id': user_id}))
 
+# called by ajax when clicking the like category button
 class LikeCategoryView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -523,7 +503,7 @@ class LikeCategoryView(View):
 
         return HttpResponse(category.likes)
 
-
+# called by ajax when clicking the like game button
 class LikeGameView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -541,6 +521,7 @@ class LikeGameView(View):
 
         return HttpResponse(game.likes)
 
+# redirecting user to desired game and increasing the game count
 class GotoView(View):
     def get(self, request):
         game_id = request.GET.get('game_id')
@@ -551,3 +532,6 @@ class GotoView(View):
         selected_game.play_count = selected_game.play_count + 1
         selected_game.save()
         return redirect(selected_game.link)
+
+
+
